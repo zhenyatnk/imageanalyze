@@ -22,6 +22,8 @@
 #include <gtest/gtest.h>
 
 //--------------------------------------------------
+using namespace imageanalyzer::core;
+
 class CPathName_test
     :public ::testing::Test
 {
@@ -32,48 +34,48 @@ public:
 
 TEST_F(CPathName_test, ToString)
 {
-    imageanalyzer::core::CPathName lPathName("path/path1");
+    CPathName lPathName("path/path1");
     lPathName.SetSeparator("/");
     ASSERT_STREQ(lPathName.ToString().c_str(), "path/path1");
 }
 
 TEST_F(CPathName_test, Ctor1)
 {
-    imageanalyzer::core::CPathName lPathName("path/path1\\");
+    CPathName lPathName("path/path1\\");
     lPathName.SetSeparator("/");
     ASSERT_STREQ(lPathName.ToString().c_str(), "path/path1");
 }
 
 TEST_F(CPathName_test, Ctor2)
 {
-    imageanalyzer::core::CPathName lPathName("path/path1/");
+    CPathName lPathName("path/path1/");
     lPathName.SetSeparator("/");
     ASSERT_STREQ(lPathName.ToString().c_str(), "path/path1");
 }
 
 TEST_F(CPathName_test, Ctor3)
 {
-    imageanalyzer::core::CPathName lPathName("path/path1//");
+    CPathName lPathName("path/path1//");
     lPathName.SetSeparator("/");
     ASSERT_STREQ(lPathName.ToString().c_str(), "path/path1");
 }
 
 TEST_F(CPathName_test, Ctor4)
 {
-    imageanalyzer::core::CPathName lPathName("path/path1//\\");
+    CPathName lPathName("path/path1//\\");
     lPathName.SetSeparator("/");
     ASSERT_STREQ(lPathName.ToString().c_str(), "path/path1");
 }
 
 TEST_F(CPathName_test, Ctor5)
 {
-    imageanalyzer::core::CPathName lPathName("\\\\path/path1//\\");
+    CPathName lPathName("\\\\path/path1//\\");
     lPathName.SetSeparator("\\");
     ASSERT_STREQ(lPathName.ToString().c_str(), "\\\\path\\path1");
 }
 TEST_F(CPathName_test, AddPath1)
 {
-    imageanalyzer::core::CPathName lPathName("path/path1");
+    CPathName lPathName("path/path1");
     lPathName.SetSeparator("/");
     lPathName.AddPath("path3");
     ASSERT_STREQ(lPathName.ToString().c_str(), "path/path1/path3");
@@ -81,7 +83,7 @@ TEST_F(CPathName_test, AddPath1)
 
 TEST_F(CPathName_test, AddPath2)
 {
-    imageanalyzer::core::CPathName lPathName("path/path1");
+    CPathName lPathName("path/path1");
     lPathName.SetSeparator("/");
     lPathName.AddPath("path3/path4");
     ASSERT_STREQ(lPathName.ToString().c_str(), "path/path1/path3/path4");
@@ -89,7 +91,7 @@ TEST_F(CPathName_test, AddPath2)
 
 TEST_F(CPathName_test, AddPath_exclude_sep_1)
 {
-    imageanalyzer::core::CPathName lPathName("path/path1");
+    CPathName lPathName("path/path1");
     lPathName.SetSeparator("/");
     lPathName.AddPath("path3\\");
     ASSERT_STREQ(lPathName.ToString().c_str(), "path/path1/path3");
@@ -97,7 +99,7 @@ TEST_F(CPathName_test, AddPath_exclude_sep_1)
 
 TEST_F(CPathName_test, AddPath_exclude_sep_2)
 {
-    imageanalyzer::core::CPathName lPathName("path/path1");
+    CPathName lPathName("path/path1");
     lPathName.SetSeparator("/");
     lPathName.AddPath("path3\\/");
     ASSERT_STREQ(lPathName.ToString().c_str(), "path/path1/path3");
@@ -105,7 +107,7 @@ TEST_F(CPathName_test, AddPath_exclude_sep_2)
 
 TEST_F(CPathName_test, AddPath_exclude_sep_3)
 {
-    imageanalyzer::core::CPathName lPathName("path/path1");
+    CPathName lPathName("path/path1");
     lPathName.SetSeparator("/");
     lPathName.AddPath("/path3\\");
     ASSERT_STREQ(lPathName.ToString().c_str(), "path/path1/path3");
@@ -113,7 +115,7 @@ TEST_F(CPathName_test, AddPath_exclude_sep_3)
 
 TEST_F(CPathName_test, AddPath_exclude_sep_4)
 {
-    imageanalyzer::core::CPathName lPathName("path/path1");
+    CPathName lPathName("path/path1");
     lPathName.SetSeparator("/");
     lPathName.AddPath("\\/path3\\");
     ASSERT_STREQ(lPathName.ToString().c_str(), "path/path1/path3");
@@ -121,8 +123,8 @@ TEST_F(CPathName_test, AddPath_exclude_sep_4)
 
 TEST_F(CPathName_test, AddPath_type_path)
 {
-    imageanalyzer::core::CPathName lPathName("path/path1");
+    CPathName lPathName("path/path1");
     lPathName.SetSeparator("/");
-    lPathName.AddPath(imageanalyzer::core::CPathName("\\/path3\\"));
+    lPathName.AddPath(CPathName("\\/path3\\"));
     ASSERT_STREQ(lPathName.ToString().c_str(), "path/path1/path3");
 }

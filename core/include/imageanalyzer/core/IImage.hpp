@@ -4,6 +4,7 @@
 #include <imageanalyzer/core/TSize.hpp>
 #include <imageanalyzer/core/TPoint.hpp>
 #include <imageanalyzer/core/CFileName.hpp>
+#include <imageanalyzer/core/IImageExceptions.hpp>
 
 #include <memory>
 
