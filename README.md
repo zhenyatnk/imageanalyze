@@ -1,4 +1,4 @@
-= THREADPOOLEX =
+= IMAGEANALYZER =
 
 == Setting Up the Environment ==
 
