@@ -29,17 +29,17 @@ struct TColor
                m_Blue  == aRht.m_Blue;
     }
 
-    unsigned long To_RGB()
+    unsigned long To_RGB() const
     {
         return ((m_Red & 0xff) << 2*8) + ((m_Green & 0xff) << 1*8) + (m_Blue & 0xff);
     }
 
-    unsigned long To_RGBA()
+    unsigned long To_RGBA() const
     {
         return ((m_Red & 0xff) << 3*8) + ((m_Green & 0xff) << 2*8) + ((m_Blue & 0xff)<< 1*8) + (m_Alpha & 0xff);
     }
 
-    unsigned long To_ARGB()
+    unsigned long To_ARGB() const
     {
         return ((m_Alpha & 0xff) << 3*8) + ((m_Red & 0xff) << 2*8) + ((m_Green & 0xff) << 1*8) + (m_Blue & 0xff);
     }
