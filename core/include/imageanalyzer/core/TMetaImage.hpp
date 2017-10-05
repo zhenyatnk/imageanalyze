@@ -8,26 +8,42 @@
 namespace imageanalyzer {
 namespace core {
 
+struct THistogram
+{
+public:
+    using TContainerColor = std::array<float, 64>;
+
+    THistogram()
+        :m_Data({})
+    {}
+
+public:
+    TContainerColor m_Data;
+};
+
+//------------------------------------------------------------
 struct TMetaImage
 {
 public:
     using Ptr = std::shared_ptr<TMetaImage>;
-    using TypeData = std::array<TColor, 64>;
+    using TContainerHistograms = std::array<THistogram, 9>;
     
 public:
-    TMetaImage() = default;
-    TMetaImage(TMetaImage&& aData)
-        :m_Data(std::move(aData.m_Data))
+    TMetaImage()
+        :m_Histograms({})
     {}
-    TMetaImage(TypeData&& aData)
-        :m_Data(std::move(aData))
+    TMetaImage(TMetaImage&& aData)
+        :m_Histograms(std::move(aData.m_Histograms))
+    {}
+    TMetaImage(TContainerHistograms&& aData)
+        :m_Histograms(std::move(m_Histograms))
     {}
 
     TMetaImage(const TMetaImage&) = delete;
     TMetaImage& operator= (const TMetaImage&) = delete;
 
 public:
-    TypeData m_Data;
+    TContainerHistograms m_Histograms;
 };
 
 }

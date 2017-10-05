@@ -11,24 +11,39 @@ class CEuclideanDistance
     :public IMetaComparator
 {
 public:
-    //static constexpr  max_distance = ;
+    virtual float GePercentEqual(const TMetaImage&, const TMetaImage&) const override;
 
-public:
-    virtual double GePercentEqual(const TMetaImage&, const TMetaImage&) const override;
+protected:
+    float GetDistance(const TMetaImage&, const TMetaImage&) const;
+    float GetDistance(const THistogram&, const THistogram&) const;
 };
 
-double CEuclideanDistance::GePercentEqual(const TMetaImage& aLeft, const TMetaImage& aRight) const
+float CEuclideanDistance::GePercentEqual(const TMetaImage& aLeft, const TMetaImage& aRight) const
 {
-    uint64_t lDistance = 0;
-    for (std::size_t lIndex = 0; lIndex < std::tuple_size<TMetaImage::TypeData>::value; ++lIndex)
-    {
-        int64_t lELementResult = aLeft.m_Data[lIndex].To_RGB();
-        lELementResult -= aRight.m_Data[lIndex].To_RGB();
-        lELementResult = lELementResult*lELementResult;
+    return 100.0 - ((float)GetDistance(aLeft, aRight) / (2 * 9));
+}
 
+float CEuclideanDistance::GetDistance(const TMetaImage& aLeft, const TMetaImage& aRight) const
+{
+    float lDistanceAll = 0;
+    for (std::size_t lIndex = 0; lIndex < std::tuple_size<TMetaImage::TContainerHistograms>::value; ++lIndex)
+        lDistanceAll += GetDistance(aLeft.m_Histograms[lIndex], aRight.m_Histograms[lIndex]);
+
+    return lDistanceAll;
+}
+
+float CEuclideanDistance::GetDistance(const THistogram& aLeft, const THistogram& aRight) const
+{
+    float lDistance = 0;
+    for (std::size_t lIndex = 0; lIndex < std::tuple_size<THistogram::TContainerColor>::value; ++lIndex)
+    {
+        float lELementResult = aLeft.m_Data[lIndex];
+        lELementResult -= aRight.m_Data[lIndex];
+        if (lELementResult < 0)
+            lELementResult = lELementResult * -1;
         lDistance += lELementResult;
     }
-    return 100.0 - 100.0 * ((double)lDistance / ((uint64_t)0xFFFFFF * 0xFFFFFF * 64));
+    return lDistance;
 }
 
 IMetaComparator::Ptr CreateEuclideanDistance()

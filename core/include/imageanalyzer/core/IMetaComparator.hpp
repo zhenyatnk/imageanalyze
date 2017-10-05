@@ -15,8 +15,8 @@ public:
 public:
     virtual ~IMetaComparator() = default;
 
-    virtual double GePercentEqual(const TMetaImage&, const TMetaImage&) const = 0;
-    virtual double GePercentEqual(TMetaImage::Ptr aLeft, TMetaImage::Ptr aRight) const
+    virtual float GePercentEqual(const TMetaImage&, const TMetaImage&) const = 0;
+    virtual float GePercentEqual(TMetaImage::Ptr aLeft, TMetaImage::Ptr aRight) const
     {
         return GePercentEqual(*aLeft, *aRight);
     }
