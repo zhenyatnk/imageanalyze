@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
-set(_project_name googletest)
+set(_project_name threadpoolex)
 
 #
 # Parameters repository
 #
-set(${_project_name}_repo "https://github.com/google/googletest.git")
-set(${_project_name}_tag "release-1.8.0")
+set(${_project_name}_repo "https://github.com/zhenyatnk/threadpoolex.git")
+set(${_project_name}_tag "v0.1.1")
 
 set(${_project_name}_main_dir ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -27,8 +27,6 @@ execute_process(COMMAND ${CMAKE_COMMAND} --build .
   WORKING_DIRECTORY ${${_project_name}_main_dir}/${${_project_name}_download_dir} )
 
  # Package also has to use one.
-
-set( gtest_force_shared_crt ON CACHE BOOL "Always use msvcrt.dll" FORCE)
 
 add_subdirectory(${${_project_name}_main_dir}/${${_project_name}_source_dir}
                  ${${_project_name}_main_dir}/${${_project_name}_build_dir})
