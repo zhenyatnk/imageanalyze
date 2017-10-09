@@ -13,6 +13,11 @@ struct TPoint
         :m_X(aX), m_Y(aY)
     {}
 
+    TPoint operator + (const TPoint& aRght)
+    {
+        return TPoint(m_X + aRght.m_X, m_Y + aRght.m_Y);
+    }
+
     int m_X;
     int m_Y;
 };

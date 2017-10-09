@@ -3,6 +3,7 @@
 
 #include <objidl.h>
 #include <gdiplus.h>
+#include <mutex>
 
 using namespace Gdiplus;
 
@@ -57,6 +58,7 @@ private:
     GDI_initializer m_GDI;
     CFileName m_FileName;
     std::shared_ptr<Bitmap> m_FileImage;
+    std::mutex m_GetColor;
 };
 
 CImage::CImage(const CFileName& aFileName)
@@ -66,8 +68,11 @@ CImage::CImage(const CFileName& aFileName)
 TColor CImage::GetColor(const TPoint &aPixel)
 {
     Color lPixel;
-    CHECK_THROW_OTHER_ERR(GetImage()->GetPixel(aPixel.m_X, aPixel.m_Y, &lPixel),
-        Status::Ok, exceptions::image_error, "Can't get color for pixel for file=" + m_FileName.GetFullFileName());
+    {
+        std::lock_guard<std::mutex> l(m_GetColor);
+        CHECK_THROW_OTHER_ERR(GetImage()->GetPixel(aPixel.m_X, aPixel.m_Y, &lPixel),
+            Status::Ok, exceptions::image_error, "Can't get color for pixel for file=" + m_FileName.GetFullFileName());
+    }
     return TColor(lPixel.GetAlpha(), lPixel.GetRed(), lPixel.GetGreen(), lPixel.GetBlue());
 }
 
