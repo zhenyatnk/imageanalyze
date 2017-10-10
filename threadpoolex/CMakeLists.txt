@@ -6,7 +6,8 @@ set(_project_name threadpoolex)
 # Parameters repository
 #
 set(${_project_name}_repo "https://github.com/zhenyatnk/threadpoolex.git")
-set(${_project_name}_tag "v0.1.1")
+#set(${_project_name}_tag "v0.1.1")
+set(${_project_name}_tag "master")
 
 set(${_project_name}_main_dir ${CMAKE_CURRENT_BINARY_DIR})
 

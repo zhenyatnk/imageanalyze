@@ -1,8 +1,9 @@
 #include <imageanalyzer/core/Tasks.hpp>
-#include <imageanalyzer/core/TaskWaiting.hpp>
 #include <imageanalyzer/core/TRectangle.hpp>
 #include <imageanalyzer/core/TMetaImage.hpp>
 #include <imageanalyzer/core/TMetaImageJson.hpp>
+
+#include <threadpoolex/core/TaskWaiting.hpp>
 
 #include <mutex>
 #include <fstream>
