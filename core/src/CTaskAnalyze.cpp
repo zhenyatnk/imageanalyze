@@ -35,12 +35,26 @@ CTaskAnalyzeBlockImage::CTaskAnalyzeBlockImage(IImage::Ptr aImage, const TRectan
     :m_Image(aImage), m_Rectangle(aRectangle),m_Result(aResult)
 {}
 
+/*
 void CTaskAnalyzeBlockImage::Execute()
 {
     for (auto iY = 0; iY < m_Rectangle.m_Size.m_Height; ++iY)
         for (auto iX = 0; iX < m_Rectangle.m_Size.m_Width; ++iX)
             ++m_Result.m_Data[GetRegion(m_Image->GetColor(m_Rectangle.m_Left + TPoint(iX, iY)))];
     
+    auto countPixels = m_Rectangle.m_Size.m_Height * m_Rectangle.m_Size.m_Width;
+    for (auto& lRegion : m_Result.m_Data)
+        lRegion = 100 * lRegion / countPixels;
+}
+*/
+void CTaskAnalyzeBlockImage::Execute()
+{
+    auto lPixels = m_Image->GetColors(m_Rectangle);
+
+    for (auto iY = 0; iY < m_Rectangle.m_Size.m_Height; ++iY)
+        for (auto iX = 0; iX < m_Rectangle.m_Size.m_Width; ++iX)
+            ++m_Result.m_Data[GetRegion(TColor::FromRGB(lPixels->GetElement<uint32_t>(iY*m_Rectangle.m_Size.m_Width + iX)))];
+
     auto countPixels = m_Rectangle.m_Size.m_Height * m_Rectangle.m_Size.m_Width;
     for (auto& lRegion : m_Result.m_Data)
         lRegion = 100 * lRegion / countPixels;
