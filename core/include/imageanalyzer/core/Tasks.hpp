@@ -7,11 +7,50 @@
 #include <threadpoolex/core/IThreadPool.hpp>
 #include <threadpoolex/core/TSingleton.hpp>
 
+#include <future>
+
 namespace imageanalyzer {
 namespace core {
 
-SINGLETON_NAME(threadpoolex::core::IThreadPool::Ptr, threadpoolex::core::CreateThreadPool(9, threadpoolex::core::CreateExpansionToMax(45)), ThreadPool_Blocks);
-SINGLETON_NAME(threadpoolex::core::IThreadPool::Ptr, threadpoolex::core::CreateThreadPool(1, threadpoolex::core::CreateExpansionToMax(5)), ThreadPool_Files);
+class ThreadPools_Analyzers
+{
+public:
+    static ThreadPools_Analyzers& GetInstance()
+    {
+        static ThreadPools_Analyzers gSingleton;
+        return gSingleton;
+    }
+
+public:
+    ThreadPools_Analyzers(const ThreadPools_Analyzers&) = delete;
+    ThreadPools_Analyzers& operator = (const ThreadPools_Analyzers&) = delete;
+
+    threadpoolex::core::IThreadPool::Ptr GetPoolForFiles() const
+    {
+        return m_PoolForFiles;
+    }
+    threadpoolex::core::IThreadPool::Ptr GetPoolForBlocks() const
+    {
+        return m_PoolForBlocks;
+    }
+
+private:
+    ThreadPools_Analyzers()
+        :m_PoolForFiles(threadpoolex::core::CreateThreadPool(1, threadpoolex::core::CreateExpansionToMax(9))),
+        m_PoolForBlocks(threadpoolex::core::CreateThreadPool(9, threadpoolex::core::CreateExpansionToMax(45)))
+    {}
+    
+    ~ThreadPools_Analyzers()
+    {
+        m_PoolForFiles.reset();
+        m_PoolForBlocks.reset();
+    }
+
+private:
+    threadpoolex::core::IThreadPool::Ptr m_PoolForFiles;
+    threadpoolex::core::IThreadPool::Ptr m_PoolForBlocks;
+};
+
 
 threadpoolex::core::ITask::Ptr CreateTaskAnalyzeInFile(const CFileName &aFileNae);
 threadpoolex::core::ITask::Ptr CreateTaskAnalyzeInFile(IImage::Ptr aImage, const CFileName &aFileResult);

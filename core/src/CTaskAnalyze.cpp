@@ -1,23 +1,22 @@
 #include <imageanalyzer/core/Tasks.hpp>
+#include <imageanalyzer/core/TaskWaiting.hpp>
 #include <imageanalyzer/core/TRectangle.hpp>
 #include <imageanalyzer/core/TMetaImage.hpp>
 #include <imageanalyzer/core/TMetaImageJson.hpp>
 
-#include <threadpoolex/core/TNotifier.hpp>
-
 #include <mutex>
 #include <fstream>
+#include <future>
 #include <vector>
 
 namespace imageanalyzer {
 namespace core {
 
-
 class CTaskAnalyzeBlockImage
     :public threadpoolex::core::ITask
 {
 public:
-    CTaskAnalyzeBlockImage(IImage::Ptr aImage, const TRectangle &aRectangle, std::shared_ptr<threadpoolex::core::TNotifier<void>> aComplete, THistogram& aResult);
+    CTaskAnalyzeBlockImage(IImage::Ptr aImage, const TRectangle &aRectangle, THistogram& aResult);
 
     virtual void Execute() override;
 
@@ -28,14 +27,12 @@ protected:
 private:
     IImage::Ptr m_Image;
     TRectangle m_Rectangle;
-    std::shared_ptr<threadpoolex::core::TNotifier<void>> m_Complete;
     THistogram& m_Result;
 };
 
-CTaskAnalyzeBlockImage::CTaskAnalyzeBlockImage(IImage::Ptr aImage, const TRectangle &aRectangle, std::shared_ptr<threadpoolex::core::TNotifier<void>> aComplete, THistogram& aResult)
-    :m_Image(aImage), m_Rectangle(aRectangle), m_Complete(aComplete), m_Result(aResult)
-{
-}
+CTaskAnalyzeBlockImage::CTaskAnalyzeBlockImage(IImage::Ptr aImage, const TRectangle &aRectangle, THistogram& aResult)
+    :m_Image(aImage), m_Rectangle(aRectangle),m_Result(aResult)
+{}
 
 void CTaskAnalyzeBlockImage::Execute()
 {
@@ -46,8 +43,6 @@ void CTaskAnalyzeBlockImage::Execute()
     auto countPixels = m_Rectangle.m_Size.m_Height * m_Rectangle.m_Size.m_Width;
     for (auto& lRegion : m_Result.m_Data)
         lRegion = 100 * lRegion / countPixels;
-
-    m_Complete->notify_one();
 }
 
 uint8_t CTaskAnalyzeBlockImage::GetRegion(const uint8_t& aBasis)
@@ -77,6 +72,7 @@ public:
 
 protected:
     std::vector<TRectangle> GetBlocksAnalyze(TSize aSizeAnalyze, uint8_t aX, uint8_t aY);
+    std::future<void> AddTaskToThreadPool(threadpoolex::core::ITask::Ptr);
 
 private:
     IImage::Ptr m_Image;
@@ -91,20 +87,14 @@ void CTaskAnalyzeFile::Execute()
 {
     TMetaImage lResult;
     {
-        std::vector<threadpoolex::core::ITask::Ptr> lTasks;
-        std::vector < std::shared_ptr<threadpoolex::core::TNotifier<void>>> lCompletings;
-
         auto lBlocks = GetBlocksAnalyze(m_Image->GetSize(), 3, 3);
+        std::vector<std::future<void>> lFutures;
 
         for (auto index = 0; index < lBlocks.size(); ++index)
-        {
-            lCompletings.push_back(std::make_shared<threadpoolex::core::TNotifier<void>>());
-            lTasks.push_back(std::make_shared<CTaskAnalyzeBlockImage>(m_Image, lBlocks[index], lCompletings.back(), lResult.m_Histograms[index]));
-        }
-        ThreadPool_Blocks::GetInstance()()->AddTasks(lTasks);
+            lFutures.push_back(AddTaskToThreadPool(std::make_shared<CTaskAnalyzeBlockImage>(m_Image, lBlocks[index], lResult.m_Histograms[index])));
         
-        for (auto& aNotifier : lCompletings)
-            aNotifier->wait();
+        for (auto& lFuture : lFutures)
+            lFuture.wait();
     }
     std::ofstream lFileJson(m_FileResult.GetFullFileName());
     lFileJson << nlohmann::json(lResult) << std::endl;
@@ -126,6 +116,14 @@ std::vector<TRectangle> CTaskAnalyzeFile::GetBlocksAnalyze(TSize aSizeAnalyze, u
         lResult[(aY - 1)*aX + iX].m_Size.m_Height = aSizeAnalyze.m_Height - lResult[(aY - 1)*aX + iX].m_Left.m_Y;
 
     return lResult;
+}
+
+std::future<void> CTaskAnalyzeFile::AddTaskToThreadPool(threadpoolex::core::ITask::Ptr aTask)
+{
+    std::promise<void> lPromise;
+    auto lFuture = lPromise.get_future();
+    ThreadPools_Analyzers::GetInstance().GetPoolForBlocks()->AddTask(CreateWaitingTask(aTask, std::move(lPromise)));
+    return lFuture;
 }
 
 //-------------------------------------------------------------------------
