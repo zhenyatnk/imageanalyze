@@ -1,6 +1,8 @@
 #include <stdio.h>
 
 #include <imageanalyzer/core/Tasks.hpp>
+#include <imageanalyzer/core/IDirectoryObject.hpp>
+
 #include <threadpoolex/core/TaskWaiting.hpp>
 #include <iostream>
 
@@ -22,18 +24,19 @@ int main(int ac, char** av)
 
         std::vector<std::future<void>> lFinishs;
 
-        CPathName lPath("e:/test_collection");
-        for (auto index = 1; index <= 100; ++index)
-            lFinishs.push_back(AddToThreadPool(CreateTaskAnalyzeInFile(CFileName(lPath, std::to_string(index) + ".jpg"))));
+        IDirectoryObject::Ptr lTestCollection = CreateDirectoryObject(CPathName(av[1]));
+        auto lFiles = lTestCollection->GetFiles();
+        auto lDirs = lTestCollection->GetDirectories();
+        for(auto lFile : *lFiles)
+            lFinishs.push_back(AddToThreadPool(CreateTaskAnalyzeInFile(lFile->GetName())));
 
-        //ThreadPools_Analyzers::GetInstance().GetPoolForFiles()->AddTask(threadpoolex::core::CreateWaitingTask(CreateTaskAnalyzeInFile(CFileName(av[1])), std::move(lPromise)));
         for(auto& lFinish: lFinishs)
             lFinish.wait();
 
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        std::cout << "Time "
+        std::cout << "Time analyze: '"
             << std::chrono::duration_cast<std::chrono::seconds>(end - start).count()
-            << "us.\n";
+            << "' s.\n";
     }
     return 0;
 }
