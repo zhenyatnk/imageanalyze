@@ -39,7 +39,7 @@ private:
         :m_PoolForFiles(threadpoolex::core::CreateThreadPool(1, threadpoolex::core::CreateExpansionToMax(9))),
         m_PoolForBlocks(threadpoolex::core::CreateThreadPool(9, threadpoolex::core::CreateExpansionToMax(45)))
     {}
-    
+
     ~ThreadPools_Analyzers()
     {
         m_PoolForFiles.reset();
@@ -50,7 +50,6 @@ private:
     threadpoolex::core::IThreadPool::Ptr m_PoolForFiles;
     threadpoolex::core::IThreadPool::Ptr m_PoolForBlocks;
 };
-
 
 threadpoolex::core::ITask::Ptr CreateTaskAnalyzeInFile(const CFileName &aFileNae);
 threadpoolex::core::ITask::Ptr CreateTaskAnalyzeInFile(IImage::Ptr aImage, const CFileName &aFileResult);

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <imageanalyzer/core/IStreamException.hpp>
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -15,8 +17,14 @@ public:
 public:
     virtual ~ILinearStream() = default;
 
-    virtual uint64_t Size() const = 0;
+    virtual size_t Size() const = 0;
     virtual const void* GetBuff() const = 0;
+
+    template<class Type>
+    size_t Size() const
+    {
+        return Size() / sizeof(Type);
+    }
 
     template<class Type>
     Type GetBuff() const
@@ -27,8 +35,8 @@ public:
     template<class Type>
     Type GetElement(uint64_t aElement) const
     {
-        if (Size() / sizeof(Type) < aElement)
-            ;
+        CHECK_THROW_BOOL((Size<Type>() > aElement),
+            exceptions::stream_error, "Stream index out of bounds. Size stream='" + std::to_string(Size<Type>()) + "' Requsted index='" + std::to_string(aElement) + "'.");
         return *(GetBuff<const Type*>() + aElement);
     }
 };
@@ -67,9 +75,15 @@ public:
 public:
     virtual ~IStream() = default;
 
-    virtual uint64_t Size() const = 0;
-    virtual size_t Read(uint64_t Offset, uint8_t* buffer, size_t size) const = 0;
-    virtual IStream::Ptr Read(uint64_t Offset, size_t size) const = 0;
+    virtual size_t Size() const = 0;
+    virtual size_t Read(size_t Offset, uint8_t* buffer, size_t size) const = 0;
+    virtual IStream::Ptr Read(size_t Offset, size_t size) const = 0;
+
+    template<class Type>
+    size_t Size() const
+    {
+        return Size() / sizeof(Type);
+    }
 };
 
 class IWriteStream
@@ -81,17 +95,18 @@ public:
 public:
     virtual ~IWriteStream() = default;
 
-    virtual void Write(uint64_t Offset, const uint8_t* buffer, size_t size) = 0;
-    virtual void Write(uint64_t Offset, IStream::Ptr aStream) = 0;
+    virtual void Write(size_t Offset, const uint8_t* buffer, size_t size) = 0;
+    virtual void Write(size_t Offset, IStream::Ptr aStream) = 0;
 };
 
 //-------------------------------------------------------------------------------------
-IStream::Ptr CreateStreamBuffer(const void* aBuff, const uint64_t &aSize);
+IStream::Ptr CreateStreamBuffer(const void* aBuff, const size_t &aSize);
 IStream::Ptr CreateStreamBuffer(IStream::Ptr aStream);
 
-ILinearStream::Ptr CreateLinearBuffer(const void* aBuff, const uint64_t &aSize);
+ILinearStream::Ptr CreateLinearBuffer(const void* aBuff, const size_t &aSize);
 ILinearStream::Ptr CreateLinearBuffer(IStream::Ptr aStream);
-ILinearWriteStream::Ptr CreateLinearWriteBuffer(const uint64_t &aSize);
+
+ILinearWriteStream::Ptr CreateLinearWriteBuffer(const size_t &aSize);
 
 }
 }

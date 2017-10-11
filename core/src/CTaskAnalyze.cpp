@@ -1,4 +1,5 @@
 #include <imageanalyzer/core/Tasks.hpp>
+#include <imageanalyzer/core/TaskAnalyzeExceptions.hpp>
 #include <imageanalyzer/core/TRectangle.hpp>
 #include <imageanalyzer/core/TMetaImage.hpp>
 #include <imageanalyzer/core/TMetaImageJson.hpp>
@@ -35,24 +36,12 @@ CTaskAnalyzeBlockImage::CTaskAnalyzeBlockImage(IImage::Ptr aImage, const TRectan
     :m_Image(aImage), m_Rectangle(aRectangle),m_Result(aResult)
 {}
 
-/*
-void CTaskAnalyzeBlockImage::Execute()
-{
-    for (auto iY = 0; iY < m_Rectangle.m_Size.m_Height; ++iY)
-        for (auto iX = 0; iX < m_Rectangle.m_Size.m_Width; ++iX)
-            ++m_Result.m_Data[GetRegion(m_Image->GetColor(m_Rectangle.m_Left + TPoint(iX, iY)))];
-    
-    auto countPixels = m_Rectangle.m_Size.m_Height * m_Rectangle.m_Size.m_Width;
-    for (auto& lRegion : m_Result.m_Data)
-        lRegion = 100 * lRegion / countPixels;
-}
-*/
 void CTaskAnalyzeBlockImage::Execute()
 {
     auto lPixels = m_Image->GetColors(m_Rectangle);
 
-    for (auto iY = 0; iY < m_Rectangle.m_Size.m_Height; ++iY)
-        for (auto iX = 0; iX < m_Rectangle.m_Size.m_Width; ++iX)
+    for (uint32_t iY = 0; iY < m_Rectangle.m_Size.m_Height; ++iY)
+        for (uint32_t iX = 0; iX < m_Rectangle.m_Size.m_Width; ++iX)
             ++m_Result.m_Data[GetRegion(TColor::FromRGB(lPixels->GetElement<uint32_t>(iY*m_Rectangle.m_Size.m_Width + iX)))];
 
     auto countPixels = m_Rectangle.m_Size.m_Height * m_Rectangle.m_Size.m_Width;
@@ -67,7 +56,7 @@ uint8_t CTaskAnalyzeBlockImage::GetRegion(const uint8_t& aBasis)
     else if (aBasis >= 128 && aBasis < 192) return 2;
     else if (aBasis >= 192 && aBasis < 256) return 3;
     else
-        throw std::exception("Несоответсвие типа цвета: тип составляющей цвета превышает 8 бит");
+        THROW_ERROR(exceptions::task_error, "Can't convert value='" + std::to_string(aBasis) + "' to region." );
     return 0;
 }
 
@@ -105,7 +94,7 @@ void CTaskAnalyzeFile::Execute()
         auto lBlocks = GetBlocksAnalyze(m_Image->GetSize(), 3, 3);
         std::vector<std::future<void>> lFutures;
 
-        for (auto index = 0; index < lBlocks.size(); ++index)
+        for (uint32_t index = 0; index < lBlocks.size(); ++index)
             lFutures.push_back(AddTaskToThreadPool(std::make_shared<CTaskAnalyzeBlockImage>(m_Image, lBlocks[index], lResult.m_Histograms[index])));
         
         for (auto& lFuture : lFutures)

@@ -11,7 +11,7 @@ struct TSize
         :m_Width(0), m_Height(0)
     {}
 
-    TSize(unsigned int aWidth, unsigned int aHeight)
+    TSize(uint32_t aWidth, uint32_t aHeight)
         :m_Width(aWidth), m_Height(aHeight)
     {}
 
@@ -26,8 +26,8 @@ struct TSize
         return lResult;
     }
 
-    unsigned int m_Width;
-    unsigned int m_Height;
+    uint32_t m_Width;
+    uint32_t m_Height;
 };
 
 }

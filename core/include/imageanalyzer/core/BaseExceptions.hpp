@@ -6,6 +6,8 @@ namespace imageanalyzer {
 namespace core {
 namespace exceptions {
 
+#define ERR_UNKNOWN   0xFFFFFFFF
+
 #define THROW_ERROR_BY_CODE(error, type_exception, message) throw type_exception(message, error)
 #define THROW_ERROR_BY_CODE2(error, type_exception, message1, message2) throw type_exception(message1, message2, error)
 #define THROW_ERROR_BY_CODE3(error, type_exception, message1, message2, message3) throw type_exception(message1, message2, message3, error)

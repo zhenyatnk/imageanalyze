@@ -88,7 +88,7 @@ ILinearStream::Ptr CImage::GetColors(const TRectangle& aPixels)
             Status::Ok, exceptions::image_error, "Can't lock block color pixel for file=" + m_FileName.GetFullFileName());
 
         lResult = CreateLinearWriteBuffer(aPixels.m_Size.m_Width * aPixels.m_Size.m_Height * sizeof(uint32_t));
-        for (auto iY = 0; iY < aPixels.m_Size.m_Height; ++iY)
+        for (uint32_t iY = 0; iY < aPixels.m_Size.m_Height; ++iY)
             memcpy(lResult->GetBuff<uint32_t*>() + iY*aPixels.m_Size.m_Width, (uint8_t*)lBlockBitmap->Scan0 + iY*lBlockBitmap->Stride, aPixels.m_Size.m_Width*sizeof(uint32_t));
 
         CHECK_THROW_OTHER_ERR(GetImage()->UnlockBits(lBlockBitmap.get()),

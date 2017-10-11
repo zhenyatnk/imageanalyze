@@ -20,7 +20,7 @@ protected:
 
 float CEuclideanDistance::GePercentEqual(const TMetaImage& aLeft, const TMetaImage& aRight) const
 {
-    return 100.0 - ((float)GetDistance(aLeft, aRight) / (2 * 9));
+    return (float)100.0 - ((float)GetDistance(aLeft, aRight) / (2 * 9));
 }
 
 float CEuclideanDistance::GetDistance(const TMetaImage& aLeft, const TMetaImage& aRight) const

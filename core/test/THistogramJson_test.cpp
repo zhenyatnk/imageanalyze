@@ -53,7 +53,7 @@ TEST_F(THistogramJson_test, deserialize_float_first)
     json test = "{\"data\":[1.198,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}"_json;
     auto lResult = test.get<THistogram>();
     ASSERT_EQ(64, lResult.m_Data.size());
-    ASSERT_FLOAT_EQ(1.198, lResult.m_Data[0]);
+    ASSERT_FLOAT_EQ((float)1.198, lResult.m_Data[0]);
 }
 
 TEST_F(THistogramJson_test, deserialize_first_nonzero)
