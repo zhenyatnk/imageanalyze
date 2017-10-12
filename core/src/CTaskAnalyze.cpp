@@ -5,17 +5,20 @@
 #include <imageanalyzer/core/TMetaImageJson.hpp>
 
 #include <threadpoolex/core/TaskWaiting.hpp>
+#include <threadpoolex/core/RAII.hpp>
 
 #include <mutex>
 #include <fstream>
 #include <future>
 #include <vector>
 
+using namespace threadpoolex::core;
+
 namespace imageanalyzer {
 namespace core {
 
 class CTaskAnalyzeBlockImage
-    :public threadpoolex::core::ITask
+    :public ITask, virtual CBaseObservableTask
 {
 public:
     CTaskAnalyzeBlockImage(IImage::Ptr aImage, const TRectangle &aRectangle, THistogram& aResult);
@@ -38,15 +41,18 @@ CTaskAnalyzeBlockImage::CTaskAnalyzeBlockImage(IImage::Ptr aImage, const TRectan
 
 void CTaskAnalyzeBlockImage::Execute()
 {
-    auto lPixels = m_Image->GetColors(m_Rectangle);
+        CRAII<CObservableTask::Ptr> l(this->GetObserver(), [](CObservableTask::Ptr aObserver) { aObserver->NotifyStart(); },
+            [](CObservableTask::Ptr aObserver) { aObserver->NotifyComplete(); });
 
-    for (uint32_t iY = 0; iY < m_Rectangle.m_Size.m_Height; ++iY)
-        for (uint32_t iX = 0; iX < m_Rectangle.m_Size.m_Width; ++iX)
-            ++m_Result.m_Data[GetRegion(TColor::FromRGB(lPixels->GetElement<uint32_t>(iY*m_Rectangle.m_Size.m_Width + iX)))];
+        auto lPixels = m_Image->GetColors(m_Rectangle);
 
-    auto countPixels = m_Rectangle.m_Size.m_Height * m_Rectangle.m_Size.m_Width;
-    for (auto& lRegion : m_Result.m_Data)
-        lRegion = 100 * lRegion / countPixels;
+        for (uint32_t iY = 0; iY < m_Rectangle.m_Size.m_Height; ++iY)
+            for (uint32_t iX = 0; iX < m_Rectangle.m_Size.m_Width; ++iX)
+                ++m_Result.m_Data[GetRegion(TColor::FromRGB(lPixels->GetElement<uint32_t>(iY*m_Rectangle.m_Size.m_Width + iX)))];
+
+        auto countPixels = m_Rectangle.m_Size.m_Height * m_Rectangle.m_Size.m_Width;
+        for (auto& lRegion : m_Result.m_Data)
+            lRegion = 100 * lRegion / countPixels;
 }
 
 uint8_t CTaskAnalyzeBlockImage::GetRegion(const uint8_t& aBasis)
@@ -56,7 +62,7 @@ uint8_t CTaskAnalyzeBlockImage::GetRegion(const uint8_t& aBasis)
     else if (aBasis >= 128 && aBasis < 192) return 2;
     else if (aBasis >= 192 && aBasis < 256) return 3;
     else
-        THROW_ERROR(exceptions::task_error, "Can't convert value='" + std::to_string(aBasis) + "' to region." );
+        THROW_ERROR(exceptions::task_analyze_error, "Can't convert value='" + std::to_string(aBasis) + "' to region." );
     return 0;
 }
 
@@ -67,7 +73,7 @@ uint8_t CTaskAnalyzeBlockImage::GetRegion(const TColor& aColor)
 
 //---------------------------------------------------------------------------
 class CTaskAnalyzeFile
-    :public threadpoolex::core::ITask
+    :public ITask, virtual CBaseObservableTask
 {
 public:
     CTaskAnalyzeFile(IImage::Ptr aImage, const CFileName &aFileResult);
@@ -76,7 +82,7 @@ public:
 
 protected:
     std::vector<TRectangle> GetBlocksAnalyze(TSize aSizeAnalyze, uint8_t aX, uint8_t aY);
-    std::future<void> AddTaskToThreadPool(threadpoolex::core::ITask::Ptr);
+    std::future<void> AddTaskToThreadPool(ITask::Ptr);
 
 private:
     IImage::Ptr m_Image;
@@ -89,19 +95,26 @@ CTaskAnalyzeFile::CTaskAnalyzeFile(IImage::Ptr aImage, const CFileName &aFileRes
 
 void CTaskAnalyzeFile::Execute()
 {
-    TMetaImage lResult;
+    try
     {
-        auto lBlocks = GetBlocksAnalyze(m_Image->GetSize(), 3, 3);
-        std::vector<std::future<void>> lFutures;
+        CRAII<CObservableTask::Ptr> l(this->GetObserver(), [](CObservableTask::Ptr aObserver) { aObserver->NotifyStart(); },
+            [](CObservableTask::Ptr aObserver) { aObserver->NotifyComplete(); });
 
-        for (uint32_t index = 0; index < lBlocks.size(); ++index)
-            lFutures.push_back(AddTaskToThreadPool(std::make_shared<CTaskAnalyzeBlockImage>(m_Image, lBlocks[index], lResult.m_Histograms[index])));
-        
-        for (auto& lFuture : lFutures)
-            lFuture.wait();
+        TMetaImage lResult;
+        {
+            auto lBlocks = GetBlocksAnalyze(m_Image->GetSize(), 3, 3);
+            std::vector<std::future<void>> lFutures;
+
+            for (uint32_t index = 0; index < lBlocks.size(); ++index)
+                lFutures.push_back(AddTaskToThreadPool(std::make_shared<CTaskAnalyzeBlockImage>(m_Image, lBlocks[index], lResult.m_Histograms[index])));
+
+            for (auto& lFuture : lFutures)
+                lFuture.get();
+        }
+        std::ofstream lFileJson(m_FileResult.GetFullFileName());
+        lFileJson << nlohmann::json(lResult) << std::endl;
     }
-    std::ofstream lFileJson(m_FileResult.GetFullFileName());
-    lFileJson << nlohmann::json(lResult) << std::endl;
+    CATCH_CODE_ERROR(exceptions_base::error_base, this->GetObserver()->NotifyError);
 }
 
 std::vector<TRectangle> CTaskAnalyzeFile::GetBlocksAnalyze(TSize aSizeAnalyze, uint8_t aX, uint8_t aY)
@@ -122,7 +135,7 @@ std::vector<TRectangle> CTaskAnalyzeFile::GetBlocksAnalyze(TSize aSizeAnalyze, u
     return lResult;
 }
 
-std::future<void> CTaskAnalyzeFile::AddTaskToThreadPool(threadpoolex::core::ITask::Ptr aTask)
+std::future<void> CTaskAnalyzeFile::AddTaskToThreadPool(ITask::Ptr aTask)
 {
     std::promise<void> lPromise;
     auto lFuture = lPromise.get_future();
@@ -132,11 +145,11 @@ std::future<void> CTaskAnalyzeFile::AddTaskToThreadPool(threadpoolex::core::ITas
 
 //-------------------------------------------------------------------------
 
-threadpoolex::core::ITask::Ptr CreateTaskAnalyzeInFile(const CFileName &aFileName)
+ITask::Ptr CreateTaskAnalyzeInFile(const CFileName &aFileName)
 {
     return CreateTaskAnalyzeInFile(CreateImage(aFileName), CFileName(aFileName.GetFullFileName() + ".data"));
 }
-threadpoolex::core::ITask::Ptr CreateTaskAnalyzeInFile(IImage::Ptr aImage, const CFileName &aFileResult)
+ITask::Ptr CreateTaskAnalyzeInFile(IImage::Ptr aImage, const CFileName &aFileResult)
 {
     return std::make_shared<CTaskAnalyzeFile>(aImage, aFileResult);
 }
