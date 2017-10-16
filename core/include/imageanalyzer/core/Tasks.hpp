@@ -36,8 +36,8 @@ public:
 
 private:
     ThreadPools_Analyzers()
-        :m_PoolForFiles(threadpoolex::core::CreateThreadPool(1, threadpoolex::core::CreateExpansionToMax(9))),
-        m_PoolForBlocks(threadpoolex::core::CreateThreadPool(9, threadpoolex::core::CreateExpansionToMax(45)))
+        :m_PoolForFiles(threadpoolex::core::CreateThreadPool(1, threadpoolex::core::CreateExpansionToCPUByProccess(threadpoolex::core::CreateSystemInfo(), 60, 1))),
+        m_PoolForBlocks(threadpoolex::core::CreateThreadPool(3, threadpoolex::core::CreateExpansionToCPUByProccess(threadpoolex::core::CreateSystemInfo(), 60, 3)))
     {}
 
     ~ThreadPools_Analyzers()

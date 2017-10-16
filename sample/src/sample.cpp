@@ -35,6 +35,23 @@ namespace
         uint32_t m_Count;
         std::atomic_int &m_Current;
     };
+    //-----------------------------------------------------------------------------
+    class CObserverTryExpansion
+        :public EmptyObserverTimer
+    {
+    public:
+        CObserverTryExpansion(IThreadPool::Ptr aThreadPool)
+            :m_ThreadPool(aThreadPool)
+        {}
+
+        void HandleCheck() override
+        {
+            m_ThreadPool->TryExpansion();
+        }
+
+    private:
+        IThreadPool::Ptr m_ThreadPool;
+    };
 }
 
 
@@ -64,6 +81,13 @@ int main(int ac, char** av)
         {
             threadpoolex::core::ITimerActive::Ptr lTimer = CreateTimerActive(1000);
             lTimer->AddObserver(std::make_shared<CObserverPrintProgress>(lFiles->size(), lCountComplete));
+
+            threadpoolex::core::ITimerActive::Ptr lTimerFiles = CreateTimerActive(1000);
+            lTimerFiles->AddObserver(std::make_shared<CObserverTryExpansion>(ThreadPools_Analyzers::GetInstance().GetPoolForFiles()));
+
+            threadpoolex::core::ITimerActive::Ptr lTimerBlocks = CreateTimerActive(400);
+            lTimerBlocks->AddObserver(std::make_shared<CObserverTryExpansion>(ThreadPools_Analyzers::GetInstance().GetPoolForBlocks()));
+
             for (auto lFile : *lFiles)
                 lFinishs.push_back(AddToThreadPool(CreateTaskAnalyzeInFile(lFile->GetName()),
                 { CreateObserverImgAnalyzeCounter(lCountComplete),
