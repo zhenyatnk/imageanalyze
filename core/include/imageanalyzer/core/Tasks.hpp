@@ -2,6 +2,7 @@
 
 #include <imageanalyzer/core/CFileName.hpp>
 #include <imageanalyzer/core/IImage.hpp>
+#include <imageanalyzer/core/TMetaImage.hpp>
 
 #include <threadpoolex/core/ITask.hpp>
 #include <threadpoolex/core/IThreadPool.hpp>
@@ -12,47 +13,14 @@
 namespace imageanalyzer {
 namespace core {
 
-class ThreadPools_Analyzers
-{
-public:
-    static ThreadPools_Analyzers& GetInstance()
-    {
-        static ThreadPools_Analyzers gSingleton;
-        return gSingleton;
-    }
+SINGLETON_NAME(threadpoolex::core::IThreadPool::Ptr, threadpoolex::core::CreateThreadPool(1, threadpoolex::core::CreateExpansionToCPU(threadpoolex::core::CreateSystemInfo(), 80, 1)), ThreadPoolGlobal);
 
-public:
-    ThreadPools_Analyzers(const ThreadPools_Analyzers&) = delete;
-    ThreadPools_Analyzers& operator = (const ThreadPools_Analyzers&) = delete;
+threadpoolex::core::ITask::Ptr CreateTaskAnalyzeBlock(IImage::Ptr aImage, const TRectangle &aRectangle, THistogram& aResult);
 
-    threadpoolex::core::IThreadPool::Ptr GetPoolForFiles() const
-    {
-        return m_PoolForFiles;
-    }
-    threadpoolex::core::IThreadPool::Ptr GetPoolForBlocks() const
-    {
-        return m_PoolForBlocks;
-    }
-
-private:
-    ThreadPools_Analyzers()
-        :m_PoolForFiles(threadpoolex::core::CreateThreadPool(1, threadpoolex::core::CreateExpansionToCPUByProccess(threadpoolex::core::CreateSystemInfo(), 60, 1))),
-        m_PoolForBlocks(threadpoolex::core::CreateThreadPool(3, threadpoolex::core::CreateExpansionToCPUByProccess(threadpoolex::core::CreateSystemInfo(), 60, 3)))
-    {}
-
-    ~ThreadPools_Analyzers()
-    {
-        m_PoolForFiles.reset();
-        m_PoolForBlocks.reset();
-    }
-
-private:
-    threadpoolex::core::IThreadPool::Ptr m_PoolForFiles;
-    threadpoolex::core::IThreadPool::Ptr m_PoolForBlocks;
-};
-
-threadpoolex::core::ITask::Ptr CreateTaskAnalyzeInFile(const CFileName &aFileNae);
+threadpoolex::core::ITask::Ptr CreateTaskAnalyzeInFile(const CFileName &aFileName);
 threadpoolex::core::ITask::Ptr CreateTaskAnalyzeInFile(IImage::Ptr aImage, const CFileName &aFileResult);
+threadpoolex::core::ITask::Ptr CreateTaskAnalyzeInFileMT(const CFileName &aFileName, threadpoolex::core::IThreadPool::WPtr aThreadPool);
+threadpoolex::core::ITask::Ptr CreateTaskAnalyzeInFileMT(IImage::Ptr aImage, const CFileName &aFileResult, threadpoolex::core::IThreadPool::WPtr aThreadPool);
 
 threadpoolex::core::IObserverTask::Ptr CreateObserverImgAnalyzeAll(const CFileName &aFileName);
 threadpoolex::core::IObserverTask::Ptr CreateObserverImgAnalyzeCounter(std::atomic_int &aCounter);

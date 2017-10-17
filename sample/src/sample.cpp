@@ -55,7 +55,7 @@ namespace
 }
 
 
-std::future<void> AddToThreadPool(threadpoolex::core::ITask::Ptr aTask, const std::vector<threadpoolex::core::IObserverTask::Ptr>& aObservers)
+std::future<void> AddToThreadPool(ITask::Ptr aTask, const std::vector<IObserverTask::Ptr>& aObservers, IThreadPool::Ptr aThreadPool)
 {
     std::promise<void> lPromise;
 
@@ -63,7 +63,7 @@ std::future<void> AddToThreadPool(threadpoolex::core::ITask::Ptr aTask, const st
         aTask->AddObserver(lObserver);
 
     auto lFinish = lPromise.get_future();
-    ThreadPools_Analyzers::GetInstance().GetPoolForFiles()->AddTask(threadpoolex::core::CreateWaitingTask(aTask, std::move(lPromise)));
+    aThreadPool->AddTask(CreateWaitingTask(aTask, std::move(lPromise)));
     return lFinish;
 }
 
@@ -74,24 +74,20 @@ int main(int ac, char** av)
         std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
         std::atomic_int lCountComplete = 0;
         std::vector<std::future<void>> lFinishs;
-
         IDirectoryObject::Ptr lTestCollection = CreateDirectoryObject(CPathName(av[1]));
         auto lFiles = lTestCollection->GetFiles();
         if (!lFiles->empty())
         {
-            threadpoolex::core::ITimerActive::Ptr lTimer = CreateTimerActive(1000);
+            ITimerActive::Ptr lTimer = CreateTimerActive(1000);
             lTimer->AddObserver(std::make_shared<CObserverPrintProgress>(lFiles->size(), lCountComplete));
 
-            threadpoolex::core::ITimerActive::Ptr lTimerFiles = CreateTimerActive(1000);
-            lTimerFiles->AddObserver(std::make_shared<CObserverTryExpansion>(ThreadPools_Analyzers::GetInstance().GetPoolForFiles()));
-
-            threadpoolex::core::ITimerActive::Ptr lTimerBlocks = CreateTimerActive(400);
-            lTimerBlocks->AddObserver(std::make_shared<CObserverTryExpansion>(ThreadPools_Analyzers::GetInstance().GetPoolForBlocks()));
+            ITimerActive::Ptr lTimerFiles = CreateTimerActive(1000);
+            lTimerFiles->AddObserver(std::make_shared<CObserverTryExpansion>(ThreadPoolGlobal::GetInstance()()));
 
             for (auto lFile : *lFiles)
                 lFinishs.push_back(AddToThreadPool(CreateTaskAnalyzeInFile(lFile->GetName()),
                 { CreateObserverImgAnalyzeCounter(lCountComplete),
-                    CreateObserverImgAnalyzeOnlyError(lFile->GetName()) }));
+                    CreateObserverImgAnalyzeOnlyError(lFile->GetName()) }, ThreadPoolGlobal::GetInstance()()));
 
             for (auto& lFinish : lFinishs)
                 lFinish.wait();
