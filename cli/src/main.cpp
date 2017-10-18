@@ -107,6 +107,8 @@ void command_compare(const CFileName& aFileName, const CPathName& aPathName)
         lAnalyzeTask->Execute();
         
         std::ifstream data_(CFileName(aFileName.GetFullFileName() + ".data").GetFullFileName());
+        if (!data_.is_open())
+            return;
         nlohmann::json j_data;
         data_ >> j_data;
         auto lMetaFind = j_data.get<TMetaImage>();

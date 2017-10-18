@@ -55,7 +55,7 @@ void CTaskAnalyzeFile::Execute()
         std::ofstream lFileJson(m_FileResult.GetFullFileName());
         lFileJson << nlohmann::json(lResult) << std::endl;
     }
-    CATCH_CODE_ERROR(exceptions_base::error_base, this->GetObserver()->NotifyError);
+    CATCH_CODE_ERROR(exceptions_base::error_base, this->GetObserver()->NotifyError)
 }
 
 std::vector<TRectangle> CTaskAnalyzeFile::GetBlocksAnalyze(TSize aSizeAnalyze, uint8_t aX, uint8_t aY)
