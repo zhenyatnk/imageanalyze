@@ -2,11 +2,14 @@
 
 #include <imageanalyzer/core/Tasks.hpp>
 #include <imageanalyzer/core/IDirectoryObject.hpp>
+#include <imageanalyzer/core/TMetaImageJson.hpp>
+#include <imageanalyzer/core/IMetaComparator.hpp>
 
 #include <threadpoolex/core/TaskWaiting.hpp>
 #include <threadpoolex/core/ITimerActiveObserver.hpp>
 #include <threadpoolex/core/ITimerActive.hpp>
 #include <iostream>
+#include <fstream>
 
 using namespace imageanalyzer::core;
 using namespace threadpoolex::core;
@@ -67,37 +70,72 @@ std::future<void> AddToThreadPool(ITask::Ptr aTask, const std::vector<IObserverT
     return lFinish;
 }
 
+void command_analyze(const CPathName& aPathName)
+{
+    std::atomic_int lCountComplete = 0;
+    std::vector<std::future<void>> lFinishs;
+    IDirectoryObject::Ptr lDirectory = CreateDirectoryObject(aPathName);
+    auto lFiles = lDirectory->GetFiles("*.jpg");
+    if (!lFiles->empty())
+    {
+        ITimerActive::Ptr lTimer = CreateTimerActive(1000);
+        lTimer->AddObserver(std::make_shared<CObserverPrintProgress>(lFiles->size(), lCountComplete));
+
+        ITimerActive::Ptr lTimerFiles = CreateTimerActive(1000);
+        lTimerFiles->AddObserver(std::make_shared<CObserverTryExpansion>(ThreadPoolGlobal::GetInstance()()));
+
+        for (auto lFile : *lFiles)
+            lFinishs.push_back(AddToThreadPool(CreateTaskAnalyzeInFile(lFile->GetName()),
+            { CreateObserverImgAnalyzeCounter(lCountComplete),
+                CreateObserverImgAnalyzeOnlyError(lFile->GetName()) }, ThreadPoolGlobal::GetInstance()()));
+
+        for (auto& lFinish : lFinishs)
+            lFinish.wait();
+    }
+
+}
+
+void command_compare(const CFileName& aFileName, const CPathName& aPathName)
+{
+    IDirectoryObject::Ptr lDirectory = CreateDirectoryObject(aPathName);
+    auto lFiles = lDirectory->GetFiles("*.data");
+    if (!lFiles->empty())
+    {
+        std::multimap<float, std::string> lResultFind;
+        auto lAnalyzeTask = CreateTaskAnalyzeInFile(aFileName);
+        lAnalyzeTask->AddObserver(CreateObserverImgAnalyzeOnlyError(aFileName));
+        lAnalyzeTask->Execute();
+        
+        std::ifstream data_(CFileName(aFileName.GetFullFileName() + ".data").GetFullFileName());
+        nlohmann::json j_data;
+        data_ >> j_data;
+        auto lMetaFind = j_data.get<TMetaImage>();
+
+        for (auto lFile : *lFiles)
+        {
+            auto lFullFileName = lFile->GetName().GetFullFileName();
+            std::ifstream data(lFullFileName);
+            nlohmann::json j_data;
+            data >> j_data;
+            lResultFind.insert(std::make_pair(CreateEuclideanDistance()->GePercentEqual(lMetaFind, j_data.get<TMetaImage>()), lFullFileName));
+        }
+        
+        auto lCount = 0;
+        for (auto lResult = lResultFind.rbegin(); lCount != 15 && lResult != lResultFind.rend(); ++lCount, ++lResult)
+            std::cout << (uint16_t)lResult->first << "%\tFileName: '" << lResult->second << "'" << std::endl;
+    }
+}
+
 int main(int ac, char** av)
 {
-    if (ac > 1)
-    {
-        std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-        std::atomic_int lCountComplete = 0;
-        std::vector<std::future<void>> lFinishs;
-        IDirectoryObject::Ptr lTestCollection = CreateDirectoryObject(CPathName(av[1]));
-        auto lFiles = lTestCollection->GetFiles();
-        if (!lFiles->empty())
-        {
-            ITimerActive::Ptr lTimer = CreateTimerActive(1000);
-            lTimer->AddObserver(std::make_shared<CObserverPrintProgress>(lFiles->size(), lCountComplete));
-
-            ITimerActive::Ptr lTimerFiles = CreateTimerActive(1000);
-            lTimerFiles->AddObserver(std::make_shared<CObserverTryExpansion>(ThreadPoolGlobal::GetInstance()()));
-
-            for (auto lFile : *lFiles)
-                lFinishs.push_back(AddToThreadPool(CreateTaskAnalyzeInFile(lFile->GetName()),
-                { CreateObserverImgAnalyzeCounter(lCountComplete),
-                    CreateObserverImgAnalyzeOnlyError(lFile->GetName()) }, ThreadPoolGlobal::GetInstance()()));
-
-            for (auto& lFinish : lFinishs)
-                lFinish.wait();
-        }
-
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        std::cout << "Time analyze: '"
-            << std::chrono::duration_cast<std::chrono::seconds>(end - start).count()
-            << "' s.\n";
-    }
+    std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+    if      (ac > 2 && std::string("analyze") == av[1])   command_analyze(CPathName(av[2]));
+    else if (ac > 3 && std::string("compare") == av[1])   command_compare(CFileName(av[2]), CPathName(av[3]));
+    else
+        ;
+    std::cout << "Time process operation: '"
+        << std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - start).count()
+        << "' s.\n" << std::endl;
 
     return 0;
 }

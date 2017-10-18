@@ -20,6 +20,7 @@ public:
 
     virtual IDirectoryObject::ListPtr GetDirectories() const = 0;
     virtual IFileObject::ListPtr GetFiles() const = 0;
+    virtual IFileObject::ListPtr GetFiles(std::string aMask) const = 0;
 };
 
 IDirectoryObject::Ptr CreateDirectoryObject(const CPathName& aName);
