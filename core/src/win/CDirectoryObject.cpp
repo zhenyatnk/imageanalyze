@@ -38,9 +38,9 @@ IDirectoryObject::ListPtr CDirectoryObject::GetDirectories() const
     {
         m_Directories = std::make_shared<std::vector<IDirectoryObject::Ptr>>();
 
-        WIN32_FIND_DATA ffd;
+        WIN32_FIND_DATAW ffd;
         HANDLE hFind = INVALID_HANDLE_VALUE;
-        hFind = FindFirstFile(GetName().AddPath(L"*").ToString().c_str(), &ffd);
+        hFind = FindFirstFileW(GetName().AddPath(L"*").ToString().c_str(), &ffd);
         if (INVALID_HANDLE_VALUE != hFind)
         {
             do
@@ -49,7 +49,7 @@ IDirectoryObject::ListPtr CDirectoryObject::GetDirectories() const
                     if(!!wcscmp(ffd.cFileName, L"..") && !!wcscmp(ffd.cFileName, L"."))
                         m_Directories->push_back(CreateDirectoryObject(CPathName(GetName()).AddPath(ffd.cFileName)));
             }
-            while (!!FindNextFile(hFind, &ffd));
+            while (!!FindNextFileW(hFind, &ffd));
         }
 
     }
@@ -66,16 +66,16 @@ IFileObject::ListPtr CDirectoryObject::GetFiles(std::wstring aMask) const
     if (!m_Files)
     {
         m_Files = std::make_shared<std::vector<IFileObject::Ptr>>();
-        WIN32_FIND_DATA ffd;
+        WIN32_FIND_DATAW ffd;
         HANDLE hFind = INVALID_HANDLE_VALUE;
-        hFind = FindFirstFile(GetName().AddPath(aMask).ToString().c_str(), &ffd);
+        hFind = FindFirstFileW(GetName().AddPath(aMask).ToString().c_str(), &ffd);
         if (INVALID_HANDLE_VALUE != hFind)
         {
             do
             {
                 if (!(ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
                     m_Files->push_back(CreateFileObject(CFileName(GetName(), ffd.cFileName)));
-            } while (!!FindNextFile(hFind, &ffd));
+            } while (!!FindNextFileW(hFind, &ffd));
         }
     }
     return m_Files;
