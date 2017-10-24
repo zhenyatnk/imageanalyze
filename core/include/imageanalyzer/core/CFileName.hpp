@@ -16,25 +16,25 @@ public:
 
 public:
     CFileName();
-    CFileName(const std::string &aFullFileName);
-    CFileName(const CPathName& aPath, const std::string &aFileName);
+    CFileName(const std::wstring &aFullFileName);
+    CFileName(const CPathName& aPath, const std::wstring &aFileName);
 
     CFileName& AddPath(const CPathName &aPath);
     CFileName& AddFileName(const CFileName &aFileName);
 
-    std::string GetExtension() const;
-    std::string GetName() const;
-    std::string GetFileName() const;
+    std::wstring GetExtension() const;
+    std::wstring GetName() const;
+    std::wstring GetFileName() const;
     CPathName   GetPath() const;
-    std::string GetFullFileName() const;
+    std::wstring GetFullFileName() const;
 
-    void SetSeparator(std::string aSeparator);
+    void SetSeparator(std::wstring aSeparator);
 
 private:
-    std::string m_FileName;
+    std::wstring m_FileName;
     CPathName m_Path;
-    mutable std::string m_FullFileName;
-    std::string m_Separator;
+    mutable std::wstring m_FullFileName;
+    std::wstring m_Separator;
 };
 
 }

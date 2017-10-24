@@ -8,33 +8,33 @@ namespace core {
 
 //--------------------------------------------------------------------------------------------------------
 CFileName::CFileName()
-    :m_Path(""), m_FileName(""), m_FullFileName("")
+    :m_Path(L""), m_FileName(L""), m_FullFileName(L"")
 {
 #ifdef _WIN32
-    m_Separator = "\\";
+    m_Separator = L"\\";
 #else
-    m_Separator = "/";
+    m_Separator = L"/";
 #endif
 }
 
-CFileName::CFileName(const std::string& aFullFileName)
-    :m_Path(""), m_FileName(""), m_FullFileName(aFullFileName)
+CFileName::CFileName(const std::wstring& aFullFileName)
+    :m_Path(L""), m_FileName(L""), m_FullFileName(aFullFileName)
 {
 #ifdef _WIN32
-    m_Separator = "\\";
+    m_Separator = L"\\";
 #else
-    m_Separator = "/";
+    m_Separator = L"/";
 #endif
 
-    std::size_t winFound = aFullFileName.rfind("\\");
-    std::size_t linFound = aFullFileName.rfind("/");
+    std::size_t winFound = aFullFileName.rfind(L"\\");
+    std::size_t linFound = aFullFileName.rfind(L"/");
     std::size_t found = winFound;
 
-    if (linFound != std::string::npos)
-        if (found == std::string::npos || found < linFound)
+    if (linFound != std::wstring::npos)
+        if (found == std::wstring::npos || found < linFound)
             found = linFound;
 
-    if (found != std::string::npos)
+    if (found != std::wstring::npos)
     {
         m_FileName = aFullFileName.substr(found + 1);
         m_Path = aFullFileName.substr(0, found);
@@ -42,22 +42,22 @@ CFileName::CFileName(const std::string& aFullFileName)
     else
         m_FileName = aFullFileName;
 }
-CFileName::CFileName(const CPathName& aPath, const std::string& aFileName)
-    :m_Path(aPath), m_FileName(aFileName), m_FullFileName("")
+CFileName::CFileName(const CPathName& aPath, const std::wstring& aFileName)
+    :m_Path(aPath), m_FileName(aFileName), m_FullFileName(L"")
 {
 #ifdef _WIN32
-    m_Separator = "\\";
+    m_Separator = L"\\";
 #else
-    m_Separator = "/";
+    m_Separator = L"/";
 #endif
-    while (!m_FileName.empty() && (m_FileName.front() == '\\' || m_FileName.front() == '/'))
+    while (!m_FileName.empty() && (m_FileName.front() == L'\\' || m_FileName.front() == L'/'))
         m_FileName = m_FileName.substr(1);
 }
 
 CFileName& CFileName::AddPath(const CPathName &aPath)
 {
     m_Path.AddPath(aPath);
-    m_FullFileName = "";
+    m_FullFileName = L"";
     return *this;
 }
 
@@ -65,31 +65,31 @@ CFileName& CFileName::AddFileName(const CFileName &aFileName)
 {
     this->AddPath(aFileName.GetPath());
     this->m_FileName = aFileName.GetFileName();
-    m_FullFileName = "";
+    m_FullFileName = L"";
     return *this;
 }
 
-std::string CFileName::GetExtension() const
+std::wstring CFileName::GetExtension() const
 {
-    std::string lExtension = GetFileName();
-    size_t lDotPos = lExtension.rfind(".");
-    if (lDotPos != std::string::npos)
+    std::wstring lExtension = GetFileName();
+    size_t lDotPos = lExtension.rfind(L".");
+    if (lDotPos != std::wstring::npos)
         lExtension = lExtension.substr(lDotPos + 1);
     else
-        lExtension = "";
+        lExtension = L"";
     return lExtension;
 }
 
-std::string CFileName::GetName() const
+std::wstring CFileName::GetName() const
 {
-    std::string lName = GetFileName();
-    size_t lDotPos = lName.rfind(".");
-    if (lDotPos != std::string::npos)
+    std::wstring lName = GetFileName();
+    size_t lDotPos = lName.rfind(L".");
+    if (lDotPos != std::wstring::npos)
         lName = lName.substr(0, lDotPos);
     return lName;
 }
 
-std::string CFileName::GetFileName() const
+std::wstring CFileName::GetFileName() const
 {
     return m_FileName;
 }
@@ -99,7 +99,7 @@ CPathName CFileName::GetPath() const
     return m_Path;
 }
 
-std::string CFileName::GetFullFileName() const
+std::wstring CFileName::GetFullFileName() const
 {
     if (m_FullFileName.empty())
     {
@@ -111,7 +111,7 @@ std::string CFileName::GetFullFileName() const
     return m_FullFileName;
 }
 
-void CFileName::SetSeparator(std::string aSeparator)
+void CFileName::SetSeparator(std::wstring aSeparator)
 {
     m_Separator = aSeparator;
     m_Path.SetSeparator(aSeparator);

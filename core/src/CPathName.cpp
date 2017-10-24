@@ -10,27 +10,27 @@ namespace core {
 CPathName::CPathName()
 {
 #ifdef _WIN32
-    m_Separator = "\\";
+    m_Separator = L"\\";
 #else
-    m_Separator = "/";
+    m_Separator = L"/";
 #endif
 }
-CPathName::CPathName(const std::string& aPath)
+CPathName::CPathName(const std::wstring& aPath)
 {
 #ifdef _WIN32
-    m_Separator = "\\";
+    m_Separator = L"\\";
 #else
-    m_Separator = "/";
+    m_Separator = L"/";
 #endif
-    std::string lPath = aPath;
-    std::string lDirectory = "";
+    std::wstring lPath = aPath;
+    std::wstring lDirectory = L"";
     for (auto lSymbol : lPath)
     {
-        if (lSymbol == '\\' || lSymbol == '/')
+        if (lSymbol == L'\\' || lSymbol == L'/')
         {
             if (!lDirectory.empty() || m_Directories.empty() || m_Directories.back().empty())
                 m_Directories.push_back(lDirectory);
-            lDirectory = "";
+            lDirectory = L"";
         }
         else
             lDirectory.push_back(lSymbol);
@@ -39,17 +39,17 @@ CPathName::CPathName(const std::string& aPath)
         m_Directories.push_back(lDirectory);
 }
 
-CPathName& CPathName::AddPath(const std::string &aPath)
+CPathName& CPathName::AddPath(const std::wstring &aPath)
 {
-    std::string lPath = aPath;
-    std::string lDirectory = "";
+    std::wstring lPath = aPath;
+    std::wstring lDirectory = L"";
     for (auto lSymbol : lPath)
     {
-        if (lSymbol == '\\' || lSymbol == '/')
+        if (lSymbol == L'\\' || lSymbol == L'/')
         {
             if (!lDirectory.empty() || m_Directories.empty())
                 m_Directories.push_back(lDirectory);
-            lDirectory = "";
+            lDirectory = L"";
         }
         else
             lDirectory.push_back(lSymbol);
@@ -62,16 +62,16 @@ CPathName& CPathName::AddPath(const std::string &aPath)
 
 CPathName& CPathName::AddPath(const CPathName &aPath)
 {
-    std::vector<std::string> lDirectories = aPath.GetDirectories();
+    std::vector<std::wstring> lDirectories = aPath.GetDirectories();
     for (auto lDirectory : lDirectories)
         if (!lDirectory.empty())
             m_Directories.push_back(lDirectory);
     return *this;
 }
 
-std::string CPathName::ToString() const
+std::wstring CPathName::ToString() const
 {
-    std::string lPath = "";
+    std::wstring lPath = L"";
     for (auto lDirectory : m_Directories)
         lPath += lDirectory + m_Separator;
     if (m_Directories.size() > 1)
@@ -79,12 +79,12 @@ std::string CPathName::ToString() const
     return lPath;
 }
 
-std::vector<std::string> CPathName::GetDirectories() const
+std::vector<std::wstring> CPathName::GetDirectories() const
 {
     return m_Directories;
 }
 
-void CPathName::SetSeparator(std::string aSeparator)
+void CPathName::SetSeparator(std::wstring aSeparator)
 {
     m_Separator = aSeparator;
 }

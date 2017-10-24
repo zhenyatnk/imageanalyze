@@ -4,6 +4,7 @@
 #include <imageanalyzer/core/IDirectoryObject.hpp>
 #include <imageanalyzer/core/TMetaImageJson.hpp>
 #include <imageanalyzer/core/IMetaComparator.hpp>
+#include <imageanalyzer/core/Unicode.hpp>
 
 #include <threadpoolex/core/TaskWaiting.hpp>
 #include <threadpoolex/core/ITimerActiveObserver.hpp>
@@ -75,7 +76,7 @@ void command_analyze(const CPathName& aPathName)
     std::atomic_int lCountComplete = 0;
     std::vector<std::future<void>> lFinishs;
     IDirectoryObject::Ptr lDirectory = CreateDirectoryObject(aPathName);
-    auto lFiles = lDirectory->GetFiles("*.jpg");
+    auto lFiles = lDirectory->GetFiles(L"*.jpg");
     if (!lFiles->empty())
     {
         ITimerActive::Ptr lTimer = CreateTimerActive(1000);
@@ -98,15 +99,15 @@ void command_analyze(const CPathName& aPathName)
 void command_compare(const CFileName& aFileName, const CPathName& aPathName)
 {
     IDirectoryObject::Ptr lDirectory = CreateDirectoryObject(aPathName);
-    auto lFiles = lDirectory->GetFiles("*.data");
+    auto lFiles = lDirectory->GetFiles(L"*.data");
     if (!lFiles->empty())
     {
-        std::multimap<float, std::string> lResultFind;
+        std::multimap<float, std::wstring> lResultFind;
         auto lAnalyzeTask = CreateTaskAnalyzeInFile(aFileName);
         lAnalyzeTask->AddObserver(CreateObserverImgAnalyzeOnlyError(aFileName));
         lAnalyzeTask->Execute();
         
-        std::ifstream data_(CFileName(aFileName.GetFullFileName() + ".data").GetFullFileName());
+        std::ifstream data_(CFileName(aFileName.GetFullFileName() + L".data").GetFullFileName());
         if (!data_.is_open())
             return;
         nlohmann::json j_data;
@@ -124,15 +125,16 @@ void command_compare(const CFileName& aFileName, const CPathName& aPathName)
         
         auto lCount = 0;
         for (auto lResult = lResultFind.rbegin(); lCount != 15 && lResult != lResultFind.rend(); ++lCount, ++lResult)
-            std::cout << (uint16_t)lResult->first << "%\tFileName: '" << lResult->second << "'" << std::endl;
+            std::wcout << (uint16_t)lResult->first << L"%\tFileName: '" << lResult->second << L"'" << std::endl;
     }
 }
 
 int main(int ac, char** av)
 {
+    std::locale::global(std::locale(""));
     std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-    if      (ac > 2 && std::string("analyze") == av[1])   command_analyze(CPathName(av[2]));
-    else if (ac > 3 && std::string("compare") == av[1])   command_compare(CFileName(av[2]), CPathName(av[3]));
+    if      (ac > 2 && std::string("analyze") == av[1])   command_analyze(CPathName(convert(av[2])));
+    else if (ac > 3 && std::string("compare") == av[1])   command_compare(CFileName(convert(av[2])), CPathName(convert(av[3])));
     else
         ;
     std::cout << "Time process operation: '"

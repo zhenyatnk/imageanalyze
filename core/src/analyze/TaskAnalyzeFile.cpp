@@ -80,7 +80,7 @@ std::vector<TRectangle> CTaskAnalyzeFile::GetBlocksAnalyze(TSize aSizeAnalyze, u
 
 ITask::Ptr CreateTaskAnalyzeInFile(const CFileName &aFileName)
 {
-    return CreateTaskAnalyzeInFile(CreateImage(aFileName), CFileName(aFileName.GetFullFileName() + ".data"));
+    return CreateTaskAnalyzeInFile(CreateImage(aFileName), CFileName(aFileName.GetFullFileName() + L".data"));
 }
 ITask::Ptr CreateTaskAnalyzeInFile(IImage::Ptr aImage, const CFileName &aFileResult)
 {

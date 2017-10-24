@@ -1,4 +1,5 @@
 #include <imageanalyzer/core/Tasks.hpp>
+#include <imageanalyzer/core/Unicode.hpp>
 
 #include <threadpoolex/core/ITaskObserver.hpp>
 
@@ -30,7 +31,7 @@ CObserverImgAnalyzerOnlyError::CObserverImgAnalyzerOnlyError(const CFileName &aF
 
 void CObserverImgAnalyzerOnlyError::HandleError(const std::string &aMessage, const int& aErrorCode)
 {
-    std::cout << "Error in proccess analyze image ='" << m_FileName.GetFullFileName() << "'. Message '" << aMessage << "'" << std::endl;
+    std::wcout << "Error in proccess analyze image ='" << m_FileName.GetFullFileName() << "'. Message '" << convert(aMessage) << "'" << std::endl;
 }
 
 threadpoolex::core::IObserverTask::Ptr CreateObserverImgAnalyzeOnlyError(const CFileName &aFileName)

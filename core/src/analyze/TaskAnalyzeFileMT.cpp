@@ -3,6 +3,7 @@
 #include <imageanalyzer/core/TRectangle.hpp>
 #include <imageanalyzer/core/TMetaImage.hpp>
 #include <imageanalyzer/core/TMetaImageJson.hpp>
+#include <imageanalyzer/core/Unicode.hpp>
 
 #include <threadpoolex/core/TaskWaiting.hpp>
 #include <threadpoolex/core/RAII.hpp>
@@ -84,7 +85,7 @@ std::vector<TRectangle> CTaskAnalyzeFileMT::GetBlocksAnalyze(TSize aSizeAnalyze,
 std::future<void> CTaskAnalyzeFileMT::AddTaskToThreadPool(ITask::Ptr aTask)
 {
     auto lThreadPool = m_ThreadPool.lock();
-    CHECK_THROW_BOOL(!!lThreadPool, exceptions::task_analyze_error, "Can't execute MT task, thread pool already destroy. FileResult:'" + m_FileResult.GetFullFileName() + "'");
+    CHECK_THROW_BOOL(!!lThreadPool, exceptions::task_analyze_error, "Can't execute MT task, thread pool already destroy. FileResult:'" + convert(m_FileResult.GetFullFileName()) + "'");
 
     std::promise<void> lPromise;
     auto lFuture = lPromise.get_future();
@@ -94,7 +95,7 @@ std::future<void> CTaskAnalyzeFileMT::AddTaskToThreadPool(ITask::Ptr aTask)
 //-------------------------------------------------------------------------
 ITask::Ptr CreateTaskAnalyzeInFileMT(const CFileName &aFileName, IThreadPool::WPtr aThreadPool)
 {
-    return CreateTaskAnalyzeInFileMT(CreateImage(aFileName), CFileName(aFileName.GetFullFileName() + ".data"), aThreadPool);
+    return CreateTaskAnalyzeInFileMT(CreateImage(aFileName), CFileName(aFileName.GetFullFileName() + L".data"), aThreadPool);
 }
 ITask::Ptr CreateTaskAnalyzeInFileMT(IImage::Ptr aImage, const CFileName &aFileResult, IThreadPool::WPtr aThreadPool)
 {

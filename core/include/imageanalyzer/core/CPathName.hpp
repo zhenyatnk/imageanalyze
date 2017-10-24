@@ -14,19 +14,19 @@ public:
 
 public:
     CPathName();
-    CPathName(const std::string &aPath);
+    CPathName(const std::wstring &aPath);
 
-    CPathName& AddPath(const std::string &aPath);
+    CPathName& AddPath(const std::wstring &aPath);
     CPathName& AddPath(const CPathName &aPath);
 
-    std::string ToString() const;
-    std::vector<std::string> GetDirectories() const;
+    std::wstring ToString() const;
+    std::vector<std::wstring> GetDirectories() const;
 
-    void SetSeparator(std::string aSeparator);
+    void SetSeparator(std::wstring aSeparator);
 
 private:
-    std::vector<std::string> m_Directories;
-    std::string m_Separator;
+    std::vector<std::wstring> m_Directories;
+    std::wstring m_Separator;
 };
 
 }

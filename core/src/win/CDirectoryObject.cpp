@@ -15,7 +15,7 @@ public:
 
     virtual IDirectoryObject::ListPtr GetDirectories() const override;
     virtual IFileObject::ListPtr GetFiles() const override;
-    virtual IFileObject::ListPtr GetFiles(std::string aMask) const override;
+    virtual IFileObject::ListPtr GetFiles(std::wstring aMask) const override;
 
 private:
     CPathName m_Name;
@@ -40,13 +40,13 @@ IDirectoryObject::ListPtr CDirectoryObject::GetDirectories() const
 
         WIN32_FIND_DATA ffd;
         HANDLE hFind = INVALID_HANDLE_VALUE;
-        hFind = FindFirstFile(GetName().AddPath("*").ToString().c_str(), &ffd);
+        hFind = FindFirstFile(GetName().AddPath(L"*").ToString().c_str(), &ffd);
         if (INVALID_HANDLE_VALUE != hFind)
         {
             do
             {
                 if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-                    if(!!strcmp(ffd.cFileName, "..") && !!strcmp(ffd.cFileName, "."))
+                    if(!!wcscmp(ffd.cFileName, L"..") && !!wcscmp(ffd.cFileName, L"."))
                         m_Directories->push_back(CreateDirectoryObject(CPathName(GetName()).AddPath(ffd.cFileName)));
             }
             while (!!FindNextFile(hFind, &ffd));
@@ -58,10 +58,10 @@ IDirectoryObject::ListPtr CDirectoryObject::GetDirectories() const
 
 IFileObject::ListPtr CDirectoryObject::GetFiles() const
 {
-    return GetFiles("*");
+    return GetFiles(L"*");
 }
 
-IFileObject::ListPtr CDirectoryObject::GetFiles(std::string aMask) const
+IFileObject::ListPtr CDirectoryObject::GetFiles(std::wstring aMask) const
 {
     if (!m_Files)
     {
