@@ -13,7 +13,7 @@
 namespace imageanalyzer {
 namespace core {
 
-class IImage
+class IMAGEANALYZER_CORE_EXPORT IImage
 {
 public:
     using Ptr = std::shared_ptr<IImage>;
@@ -26,7 +26,7 @@ public:
     virtual TSize GetSize() = 0;
 };
 
-IImage::Ptr CreateImage(const CFileName& aFileName);
+IMAGEANALYZER_CORE_EXPORT IImage::Ptr CreateImage(const CFileName& aFileName);
 
 }
 }

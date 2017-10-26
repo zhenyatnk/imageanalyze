@@ -1,5 +1,5 @@
 #pragma once
-
+#include <imageanalyzer/core/export.hpp>
 #include <imageanalyzer/core/TMetaImage.hpp>
 
 #include <memory>
@@ -7,7 +7,7 @@
 namespace imageanalyzer {
 namespace core {
 
-class IMetaComparator
+class IMAGEANALYZER_CORE_EXPORT IMetaComparator
 {
 public:
     using Ptr = std::shared_ptr<IMetaComparator>;
@@ -22,7 +22,7 @@ public:
     }
 };
 
-IMetaComparator::Ptr CreateEuclideanDistance();
+IMAGEANALYZER_CORE_EXPORT IMetaComparator::Ptr CreateEuclideanDistance();
 
 }
 }

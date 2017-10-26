@@ -1,12 +1,14 @@
 #pragma once
 
+#include <imageanalyzer/core/export.hpp>
+
 #include <string>
 
 namespace imageanalyzer {
 namespace core {
 
-std::string convert(const std::wstring&);
-std::wstring convert(const std::string&);
+IMAGEANALYZER_CORE_EXPORT std::string convert(const std::wstring&);
+IMAGEANALYZER_CORE_EXPORT std::wstring convert(const std::string&);
 
 }
 }

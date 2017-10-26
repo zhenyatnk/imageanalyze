@@ -9,7 +9,7 @@
 namespace imageanalyzer {
 namespace core {
 
-class ILinearStream
+class IMAGEANALYZER_CORE_EXPORT ILinearStream
 {
 public:
     typedef std::shared_ptr<ILinearStream> Ptr;
@@ -100,13 +100,13 @@ public:
 };
 
 //-------------------------------------------------------------------------------------
-IStream::Ptr CreateStreamBuffer(const void* aBuff, const size_t &aSize);
-IStream::Ptr CreateStreamBuffer(IStream::Ptr aStream);
+IMAGEANALYZER_CORE_EXPORT IStream::Ptr CreateStreamBuffer(const void* aBuff, const size_t &aSize);
+IMAGEANALYZER_CORE_EXPORT IStream::Ptr CreateStreamBuffer(IStream::Ptr aStream);
 
-ILinearStream::Ptr CreateLinearBuffer(const void* aBuff, const size_t &aSize);
-ILinearStream::Ptr CreateLinearBuffer(IStream::Ptr aStream);
+IMAGEANALYZER_CORE_EXPORT ILinearStream::Ptr CreateLinearBuffer(const void* aBuff, const size_t &aSize);
+IMAGEANALYZER_CORE_EXPORT ILinearStream::Ptr CreateLinearBuffer(IStream::Ptr aStream);
 
-ILinearWriteStream::Ptr CreateLinearWriteBuffer(const size_t &aSize);
+IMAGEANALYZER_CORE_EXPORT ILinearWriteStream::Ptr CreateLinearWriteBuffer(const size_t &aSize);
 
 }
 }

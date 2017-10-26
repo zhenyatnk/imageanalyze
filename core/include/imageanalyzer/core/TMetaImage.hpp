@@ -1,5 +1,6 @@
 #pragma once
 
+#include <imageanalyzer/core/export.hpp>
 #include <imageanalyzer/core/TColor.hpp>
 
 #include <array>
@@ -8,7 +9,7 @@
 namespace imageanalyzer {
 namespace core {
 
-struct THistogram
+struct IMAGEANALYZER_CORE_EXPORT THistogram
 {
 public:
     using TContainerColor = std::array<float, 64>;
@@ -22,7 +23,7 @@ public:
 };
 
 //------------------------------------------------------------
-struct TMetaImage
+struct IMAGEANALYZER_CORE_EXPORT TMetaImage
 {
 public:
     using Ptr = std::shared_ptr<TMetaImage>;

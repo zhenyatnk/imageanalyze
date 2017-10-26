@@ -20,7 +20,7 @@ set(${_project_name}_${_component_name}_PRIVATE_INCLUDE_DIR ${_private_includes_
     CACHE INTERNAL "${_project_name}_${_component_name} private headers directory.")
 
 # Set a directory for version file.
-set(${_project_name}_${_component_name}_PRIVATE_BINARY_DIR ${CMAKE_BINARY_DIR}/binary_include
+set(${_project_name}_${_component_name}_PRIVATE_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/../binary_include
     CACHE INTERNAL "${_project_name}_${_component_name} private binary headers directory.")
 
 # Put a list of header files into the cache.
@@ -92,8 +92,15 @@ else()
     message(ERROR_FATAL "Unknown component type for ${_project_name}")
 endif()
 
+#
+# Switch exports to the appropriate state STATIC or SHARED.
+#
+if((NOT "${${_project_name}_${_component_name}_library_type}" STREQUAL "STATIC" AND ${BUILD_SHARED_LIBS}) OR "${${_project_name}_${_component_name}_library_type}" STREQUAL "SHARED")
+    add_definitions(-D${_project_name}_${_component_name}_SHARED_DEFINE)
+endif()
+
 if(${BUILD_SHARED_LIBS})
-    add_definitions(-DGTEST_LINKED_AS_SHARED_LIBRARY)
+    add_definitions(-DGTEST_LINKED_AS_SHARED_LIBRARY=1)
 endif()
 
 
@@ -137,8 +144,7 @@ if(${_project_name}_${_component_name}_TESTS)
         ${CMAKE_THREAD_LIBS_INIT}
         ${_project_name}_${_component_name}
         gmock
-        gtest
-        gtest_main)
+        gtest)
 
     add_test(NAME ${_project_name}_${_component_name}
              COMMAND ${_project_name}_${_component_name}_test

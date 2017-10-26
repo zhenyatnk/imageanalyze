@@ -8,7 +8,7 @@
 namespace imageanalyzer {
 namespace core {
 
-class IFileObject
+class IMAGEANALYZER_CORE_EXPORT IFileObject
 {
 public:
     using Ptr = std::shared_ptr<IFileObject>;
@@ -18,7 +18,7 @@ public:
     virtual CFileName GetName() const = 0;
 };
 
-IFileObject::Ptr CreateFileObject(const CFileName &aFileName);
+IMAGEANALYZER_CORE_EXPORT IFileObject::Ptr CreateFileObject(const CFileName &aFileName);
 
 }
 }

@@ -15,16 +15,16 @@ namespace core {
 
 SINGLETON_NAME(threadpoolex::core::IThreadPool::Ptr, threadpoolex::core::CreateThreadPool(1, threadpoolex::core::CreateExpansionToCPU(threadpoolex::core::CreateSystemInfo(), 80, 1)), ThreadPoolGlobal);
 
-threadpoolex::core::ITask::Ptr CreateTaskAnalyzeBlock(IImage::Ptr aImage, const TRectangle &aRectangle, THistogram& aResult);
+IMAGEANALYZER_CORE_EXPORT threadpoolex::core::ITask::Ptr CreateTaskAnalyzeBlock(IImage::Ptr aImage, const TRectangle &aRectangle, THistogram& aResult);
 
-threadpoolex::core::ITask::Ptr CreateTaskAnalyzeInFile(const CFileName &aFileName);
-threadpoolex::core::ITask::Ptr CreateTaskAnalyzeInFile(IImage::Ptr aImage, const CFileName &aFileResult);
-threadpoolex::core::ITask::Ptr CreateTaskAnalyzeInFileMT(const CFileName &aFileName, threadpoolex::core::IThreadPool::WPtr aThreadPool);
-threadpoolex::core::ITask::Ptr CreateTaskAnalyzeInFileMT(IImage::Ptr aImage, const CFileName &aFileResult, threadpoolex::core::IThreadPool::WPtr aThreadPool);
+IMAGEANALYZER_CORE_EXPORT threadpoolex::core::ITask::Ptr CreateTaskAnalyzeInFile(const CFileName &aFileName);
+IMAGEANALYZER_CORE_EXPORT threadpoolex::core::ITask::Ptr CreateTaskAnalyzeInFile(IImage::Ptr aImage, const CFileName &aFileResult);
+IMAGEANALYZER_CORE_EXPORT threadpoolex::core::ITask::Ptr CreateTaskAnalyzeInFileMT(const CFileName &aFileName, threadpoolex::core::IThreadPool::WPtr aThreadPool);
+IMAGEANALYZER_CORE_EXPORT threadpoolex::core::ITask::Ptr CreateTaskAnalyzeInFileMT(IImage::Ptr aImage, const CFileName &aFileResult, threadpoolex::core::IThreadPool::WPtr aThreadPool);
 
-threadpoolex::core::IObserverTask::Ptr CreateObserverImgAnalyzeAll(const CFileName &aFileName);
-threadpoolex::core::IObserverTask::Ptr CreateObserverImgAnalyzeCounter(std::atomic_int &aCounter);
-threadpoolex::core::IObserverTask::Ptr CreateObserverImgAnalyzeOnlyError(const CFileName &aFileName);
+IMAGEANALYZER_CORE_EXPORT threadpoolex::core::IObserverTask::Ptr CreateObserverImgAnalyzeAll(const CFileName &aFileName);
+IMAGEANALYZER_CORE_EXPORT threadpoolex::core::IObserverTask::Ptr CreateObserverImgAnalyzeCounter(std::atomic_int &aCounter);
+IMAGEANALYZER_CORE_EXPORT threadpoolex::core::IObserverTask::Ptr CreateObserverImgAnalyzeOnlyError(const CFileName &aFileName);
 
 }
 }

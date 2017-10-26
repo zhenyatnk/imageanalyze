@@ -8,7 +8,7 @@ namespace imageanalyzer {
 namespace core {
 namespace exceptions {
 
-class task_analyze_error
+class IMAGEANALYZER_CORE_EXPORT task_analyze_error
     :public threadpoolex::core::exceptions::task_error
 {
 public:

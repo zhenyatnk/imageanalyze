@@ -1,5 +1,7 @@
 #pragma once
 
+#include <imageanalyzer/core/export.hpp>
+
 #include <memory>
 #include <functional>
 #include <thread>
@@ -9,7 +11,7 @@ namespace imageanalyzer {
 namespace core {
 
 //--------------------------------------------------------------
-class IRAII
+class IMAGEANALYZER_CORE_EXPORT IRAII
 {
 public:
     using Ptr = std::shared_ptr<IRAII>;

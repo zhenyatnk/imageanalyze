@@ -1,5 +1,7 @@
 #pragma once
 
+#include <imageanalyzer/core/export.hpp>
+
 #include <string>
 #include <memory>
 #include <vector>
@@ -7,7 +9,7 @@
 namespace imageanalyzer {
 namespace core {
 
-class CPathName
+class IMAGEANALYZER_CORE_EXPORT CPathName
 {
 public:
     using Ptr = std::shared_ptr<CPathName>;

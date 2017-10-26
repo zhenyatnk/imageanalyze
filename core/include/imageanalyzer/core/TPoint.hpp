@@ -3,7 +3,7 @@
 namespace imageanalyzer {
 namespace core {
 
-struct TPoint
+struct IMAGEANALYZER_CORE_EXPORT TPoint
 {
     TPoint()
         :m_X(0), m_Y(0)

@@ -6,7 +6,7 @@ namespace imageanalyzer {
 namespace core {
 namespace exceptions {
 
-class image_error
+class IMAGEANALYZER_CORE_EXPORT image_error
     :public exceptions::imageanalyzer_error_base
 {
 public:

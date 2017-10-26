@@ -1,5 +1,6 @@
 #pragma once
 
+#include <imageanalyzer/core/export.hpp>
 #include <threadpoolex/core/BaseExceptions.hpp>
 #include <stdexcept>
 
@@ -7,7 +8,7 @@ namespace imageanalyzer {
 namespace core {
 namespace exceptions {
 
-class imageanalyzer_error_base
+class IMAGEANALYZER_CORE_EXPORT imageanalyzer_error_base
     :public exceptions_base::error_base
 {
 public:

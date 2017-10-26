@@ -1,12 +1,13 @@
 #pragma once
 
+#include <imageanalyzer/core/export.hpp>
 #include <imageanalyzer/core/BaseExceptions.hpp>
 
 namespace imageanalyzer {
 namespace core {
 namespace exceptions {
 
-class stream_error
+class IMAGEANALYZER_CORE_EXPORT stream_error
     :public imageanalyzer_error_base
 {
 public:

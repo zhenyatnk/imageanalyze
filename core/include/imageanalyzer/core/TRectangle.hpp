@@ -6,7 +6,7 @@
 namespace imageanalyzer {
 namespace core {
 
-struct TRectangle
+struct IMAGEANALYZER_CORE_EXPORT TRectangle
 {
     TRectangle(TPoint aLeft, TSize aSize)
         :m_Left(aLeft), m_Size(aSize)

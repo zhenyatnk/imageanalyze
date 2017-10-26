@@ -9,7 +9,7 @@
 namespace imageanalyzer {
 namespace core {
 
-class IDirectoryObject
+class IMAGEANALYZER_CORE_EXPORT IDirectoryObject
 {
 public:
     using Ptr = std::shared_ptr<IDirectoryObject>;
@@ -23,7 +23,7 @@ public:
     virtual IFileObject::ListPtr GetFiles(std::wstring aMask) const = 0;
 };
 
-IDirectoryObject::Ptr CreateDirectoryObject(const CPathName& aName);
+IMAGEANALYZER_CORE_EXPORT IDirectoryObject::Ptr CreateDirectoryObject(const CPathName& aName);
 
 }
 }

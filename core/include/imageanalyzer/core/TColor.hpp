@@ -1,13 +1,16 @@
 #pragma once
 
+#include <imageanalyzer/core/export.hpp>
 #include <cstdint>
 
 namespace imageanalyzer {
 namespace core {
 
+namespace {
 #define TO_BYTE(value, number) (value >> number*8) & 0xff
+}
 
-struct TColor
+struct IMAGEANALYZER_CORE_EXPORT TColor
 {
     TColor()
         :m_Alpha(255), m_Red(0), m_Green(0), m_Blue(0)

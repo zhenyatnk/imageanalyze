@@ -1,5 +1,6 @@
 #pragma once
 
+#include <imageanalyzer/core/export.hpp>
 #include <imageanalyzer/core/CPathName.hpp>
 
 #include <string>
@@ -9,7 +10,7 @@
 namespace imageanalyzer {
 namespace core {
 
-class CFileName
+class IMAGEANALYZER_CORE_EXPORT CFileName
 {
 public:
     using Ptr = std::shared_ptr<CFileName>;

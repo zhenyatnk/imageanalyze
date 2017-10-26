@@ -5,7 +5,7 @@
 namespace imageanalyzer {
 namespace core {
 
-struct TSize
+struct IMAGEANALYZER_CORE_EXPORT TSize
 {
     TSize()
         :m_Width(0), m_Height(0)

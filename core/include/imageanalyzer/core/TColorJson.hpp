@@ -8,8 +8,8 @@
 namespace imageanalyzer {
 namespace core {
 
-void to_json(nlohmann::json& j, const TColor& p);
-void from_json(const nlohmann::json& j, TColor& p);
+IMAGEANALYZER_CORE_EXPORT void to_json(nlohmann::json& j, const TColor& p);
+IMAGEANALYZER_CORE_EXPORT void from_json(const nlohmann::json& j, TColor& p);
 
 }
 }
