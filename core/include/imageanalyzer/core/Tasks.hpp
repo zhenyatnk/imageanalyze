@@ -8,7 +8,7 @@
 #include <threadpoolex/core/IThreadPool.hpp>
 #include <threadpoolex/core/TSingleton.hpp>
 
-#include <future>
+#include <atomic>
 
 namespace imageanalyzer {
 namespace core {
