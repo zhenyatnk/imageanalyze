@@ -6,11 +6,13 @@
 #include <imageanalyzer/core/IMetaComparator.hpp>
 #include <imageanalyzer/core/Unicode.hpp>
 
-#include <threadpoolex/core/TaskPromise.hpp>
+#include <threadpoolex/core/ITaskWait.hpp>
 #include <threadpoolex/core/ITimerActiveObserver.hpp>
 #include <threadpoolex/core/ITimerActive.hpp>
 #include <iostream>
 #include <fstream>
+
+#include <chrono>
 
 using namespace imageanalyzer::core;
 using namespace threadpoolex::core;
@@ -59,22 +61,21 @@ namespace
 }
 
 
-std::future<void> AddToThreadPool(ITask::Ptr aTask, const std::vector<IObserverTask::Ptr>& aObservers, IThreadPool::Ptr aThreadPool)
+IWait::Ptr AddToThreadPool(ITask::Ptr aTask, const std::vector<IObserverTask::Ptr>& aObservers, IThreadPool::Ptr aThreadPool)
 {
-    std::promise<void> lPromise;
+    IWait::Ptr lWait;
 
     for(auto& lObserver: aObservers)
         aTask->AddObserver(lObserver);
 
-    auto lFinish = lPromise.get_future();
-    aThreadPool->AddTask(CreateTaskPromise(aTask, std::move(lPromise)));
-    return lFinish;
+    aThreadPool->AddTask(CreateTaskWait(aTask, lWait));
+    return lWait;
 }
 
 void command_analyze(const CPathName& aPathName)
 {
     std::atomic_int lCountComplete = 0;
-    std::vector<std::future<void>> lFinishs;
+    std::vector<IWait::Ptr> lFinishs;
     IDirectoryObject::Ptr lDirectory = CreateDirectoryObject(aPathName);
     auto lFiles = lDirectory->GetFiles(L"*.jpg");
     if (!lFiles->empty())
@@ -91,7 +92,7 @@ void command_analyze(const CPathName& aPathName)
                 CreateObserverImgAnalyzeOnlyError(lFile->GetName()) }, ThreadPoolGlobal::GetInstance()()));
 
         for (auto& lFinish : lFinishs)
-            lFinish.wait();
+            lFinish->Wait();
     }
 
 }

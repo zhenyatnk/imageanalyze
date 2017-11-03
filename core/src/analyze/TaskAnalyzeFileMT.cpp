@@ -6,7 +6,7 @@
 #include <imageanalyzer/core/Unicode.hpp>
 
 #include <threadpoolex/core/RAII.hpp>
-#include <threadpoolex/core/TaskPromise.hpp>
+#include <threadpoolex/core/ITaskWait.hpp>
 
 #include <mutex>
 #include <fstream>
@@ -28,7 +28,7 @@ public:
 
 protected:
     std::vector<TRectangle> GetBlocksAnalyze(TSize aSizeAnalyze, uint8_t aX, uint8_t aY);
-    std::future<void> AddTaskToThreadPool(ITask::Ptr);
+    IWait::Ptr AddTaskToThreadPool(ITask::Ptr);
 
 private:
     IImage::Ptr m_Image;
@@ -50,13 +50,13 @@ void CTaskAnalyzeFileMT::Execute()
         TMetaImage lResult;
         {
             auto lBlocks = GetBlocksAnalyze(m_Image->GetSize(), 3, 3);
-            std::vector<std::future<void>> lFutures;
+            std::vector<IWait::Ptr> lWaits;
 
             for (uint32_t index = 0; index < lBlocks.size(); ++index)
-                lFutures.push_back(AddTaskToThreadPool(CreateTaskAnalyzeBlock(m_Image, lBlocks[index], lResult.m_Histograms[index])));
+                lWaits.push_back(AddTaskToThreadPool(CreateTaskAnalyzeBlock(m_Image, lBlocks[index], lResult.m_Histograms[index])));
 
-            for (auto& lFuture : lFutures)
-                lFuture.get();
+            for (auto& lWait : lWaits)
+                lWait->Wait();
         }
         std::ofstream lFileJson(m_FileResult.GetFullFileName());
         lFileJson << nlohmann::json(lResult) << std::endl;
@@ -82,15 +82,14 @@ std::vector<TRectangle> CTaskAnalyzeFileMT::GetBlocksAnalyze(TSize aSizeAnalyze,
     return lResult;
 }
 
-std::future<void> CTaskAnalyzeFileMT::AddTaskToThreadPool(ITask::Ptr aTask)
+IWait::Ptr CTaskAnalyzeFileMT::AddTaskToThreadPool(ITask::Ptr aTask)
 {
     auto lThreadPool = m_ThreadPool.lock();
     CHECK_THROW_BOOL(!!lThreadPool, exceptions::task_analyze_error, "Can't execute MT task, thread pool already destroy. FileResult:'" + convert(m_FileResult.GetFullFileName()) + "'");
 
-    std::promise<void> lPromise;
-    auto lFuture = lPromise.get_future();
-    lThreadPool->AddTask(CreateTaskPromise(aTask, std::move(lPromise)));
-    return lFuture;
+    IWait::Ptr lWait;
+    lThreadPool->AddTask(CreateTaskWait(aTask, lWait));
+    return lWait;
 }
 //-------------------------------------------------------------------------
 ITask::Ptr CreateTaskAnalyzeInFileMT(const CFileName &aFileName, IThreadPool::WPtr aThreadPool)
