@@ -4,7 +4,6 @@
 #include <imageanalyzer/core/TMetaImage.hpp>
 #include <imageanalyzer/core/TMetaImageJson.hpp>
 
-#include <threadpoolex/core/TaskWaiting.hpp>
 #include <threadpoolex/core/RAII.hpp>
 
 #include <mutex>

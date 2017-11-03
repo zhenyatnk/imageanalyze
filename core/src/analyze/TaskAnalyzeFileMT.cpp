@@ -5,8 +5,8 @@
 #include <imageanalyzer/core/TMetaImageJson.hpp>
 #include <imageanalyzer/core/Unicode.hpp>
 
-#include <threadpoolex/core/TaskWaiting.hpp>
 #include <threadpoolex/core/RAII.hpp>
+#include <threadpoolex/core/TaskPromise.hpp>
 
 #include <mutex>
 #include <fstream>
@@ -89,7 +89,7 @@ std::future<void> CTaskAnalyzeFileMT::AddTaskToThreadPool(ITask::Ptr aTask)
 
     std::promise<void> lPromise;
     auto lFuture = lPromise.get_future();
-    lThreadPool->AddTask(CreateWaitingTask(aTask, std::move(lPromise)));
+    lThreadPool->AddTask(CreateTaskPromise(aTask, std::move(lPromise)));
     return lFuture;
 }
 //-------------------------------------------------------------------------

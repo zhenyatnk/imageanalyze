@@ -6,7 +6,7 @@
 #include <imageanalyzer/core/IMetaComparator.hpp>
 #include <imageanalyzer/core/Unicode.hpp>
 
-#include <threadpoolex/core/TaskWaiting.hpp>
+#include <threadpoolex/core/TaskPromise.hpp>
 #include <threadpoolex/core/ITimerActiveObserver.hpp>
 #include <threadpoolex/core/ITimerActive.hpp>
 #include <iostream>
@@ -67,7 +67,7 @@ std::future<void> AddToThreadPool(ITask::Ptr aTask, const std::vector<IObserverT
         aTask->AddObserver(lObserver);
 
     auto lFinish = lPromise.get_future();
-    aThreadPool->AddTask(CreateWaitingTask(aTask, std::move(lPromise)));
+    aThreadPool->AddTask(CreateTaskPromise(aTask, std::move(lPromise)));
     return lFinish;
 }
 
