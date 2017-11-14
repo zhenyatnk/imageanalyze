@@ -1,8 +1,9 @@
 #pragma once
 
-#include <imageanalyzer/core/TPoint.hpp>
+#include <imageanalyzer.native/core/TPoint.hpp>
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 struct IMAGEANALYZER_CORE_EXPORT TSize
@@ -30,5 +31,6 @@ struct IMAGEANALYZER_CORE_EXPORT TSize
     uint32_t m_Height;
 };
 
+}
 }
 }

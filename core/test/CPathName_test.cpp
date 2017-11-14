@@ -1,9 +1,9 @@
-#include <imageanalyzer/core/CPathName.hpp>
+#include <imageanalyzer.native/core/CPathName.hpp>
 
 #include <gtest/gtest.h>
 
 //--------------------------------------------------
-using namespace imageanalyzer::core;
+using namespace imageanalyzer::native::core;
 
 class CPathName_test
     :public ::testing::Test

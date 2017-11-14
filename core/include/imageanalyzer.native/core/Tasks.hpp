@@ -1,8 +1,8 @@
 #pragma once
 
-#include <imageanalyzer/core/CFileName.hpp>
-#include <imageanalyzer/core/IImage.hpp>
-#include <imageanalyzer/core/TMetaImage.hpp>
+#include <imageanalyzer.native/core/CFileName.hpp>
+#include <imageanalyzer.native/core/IImage.hpp>
+#include <imageanalyzer.native/core/TMetaImage.hpp>
 
 #include <threadpoolex/core/ITask.hpp>
 #include <threadpoolex/core/IThreadPool.hpp>
@@ -11,6 +11,7 @@
 #include <atomic>
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 SINGLETON_NAME(threadpoolex::core::IThreadPool::Ptr, threadpoolex::core::CreateThreadPool(1, threadpoolex::core::CreateExpansionToCPU(threadpoolex::core::CreateSystemInfo(), 80, 1)), ThreadPoolGlobal);
@@ -26,5 +27,6 @@ IMAGEANALYZER_CORE_EXPORT threadpoolex::core::IObserverTask::Ptr CreateObserverI
 IMAGEANALYZER_CORE_EXPORT threadpoolex::core::IObserverTask::Ptr CreateObserverImgAnalyzeCounter(std::atomic_int &aCounter);
 IMAGEANALYZER_CORE_EXPORT threadpoolex::core::IObserverTask::Ptr CreateObserverImgAnalyzeOnlyError(const CFileName &aFileName);
 
+}
 }
 }

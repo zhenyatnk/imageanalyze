@@ -1,9 +1,9 @@
-#include <imageanalyzer/core/Tasks.hpp>
-#include <imageanalyzer/core/TaskAnalyzeExceptions.hpp>
-#include <imageanalyzer/core/TRectangle.hpp>
-#include <imageanalyzer/core/TMetaImage.hpp>
-#include <imageanalyzer/core/TMetaImageJson.hpp>
-#include <imageanalyzer/core/Unicode.hpp>
+#include <imageanalyzer.native/core/Tasks.hpp>
+#include <imageanalyzer.native/core/TaskAnalyzeExceptions.hpp>
+#include <imageanalyzer.native/core/TRectangle.hpp>
+#include <imageanalyzer.native/core/TMetaImage.hpp>
+#include <imageanalyzer.native/core/TMetaImageJson.hpp>
+#include <imageanalyzer.native/core/Unicode.hpp>
 
 #include <threadpoolex/core/RAII.hpp>
 #include <threadpoolex/core/ITaskWait.hpp>
@@ -16,6 +16,7 @@
 using namespace threadpoolex::core;
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 //---------------------------------------------------------------------------
 class CTaskAnalyzeFileMT
@@ -102,5 +103,6 @@ ITask::Ptr CreateTaskAnalyzeInFileMT(const CFileName &aFileName, const CFileName
     return std::make_shared<CTaskAnalyzeFileMT>(aFileName, aFileResult, aThreadPool);
 }
 
+}
 }
 }

@@ -1,11 +1,12 @@
 #pragma once
 
-#include <imageanalyzer/core/CFileName.hpp>
+#include <imageanalyzer.native/core/CFileName.hpp>
 
 #include <vector>
 #include <memory>
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 class IMAGEANALYZER_CORE_EXPORT IFileObject
@@ -20,5 +21,6 @@ public:
 
 IMAGEANALYZER_CORE_EXPORT IFileObject::Ptr CreateFileObject(const CFileName &aFileName);
 
+}
 }
 }

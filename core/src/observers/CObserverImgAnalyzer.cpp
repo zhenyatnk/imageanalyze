@@ -1,5 +1,5 @@
-#include <imageanalyzer/core/Tasks.hpp>
-#include <imageanalyzer/core/Unicode.hpp>
+#include <imageanalyzer.native/core/Tasks.hpp>
+#include <imageanalyzer.native/core/Unicode.hpp>
 
 #include <threadpoolex/core/ITaskObserver.hpp>
 
@@ -9,6 +9,7 @@
 using namespace threadpoolex::core;
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 class CObserverTaskAnalyzer
@@ -53,5 +54,6 @@ threadpoolex::core::IObserverTask::Ptr CreateObserverImgAnalyzeAll(const CFileNa
     return std::make_shared<CObserverTaskAnalyzer>(aFileName);
 }
 
+}
 }
 }

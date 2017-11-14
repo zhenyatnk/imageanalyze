@@ -1,12 +1,13 @@
 #pragma once
 
-#include <imageanalyzer/core/export.hpp>
-#include <imageanalyzer/core/TColor.hpp>
+#include <imageanalyzer.native/core/export.hpp>
+#include <imageanalyzer.native/core/TColor.hpp>
 
 #include <array>
 #include <memory>
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 struct IMAGEANALYZER_CORE_EXPORT THistogram
@@ -47,5 +48,6 @@ public:
     TContainerHistograms m_Histograms;
 };
 
+}
 }
 }

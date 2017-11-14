@@ -1,9 +1,9 @@
-#include <imageanalyzer/core/IImage.hpp>
+#include <imageanalyzer.native/core/IImage.hpp>
 
 #include <gtest/gtest.h>
 
 //--------------------------------------------------
-using namespace imageanalyzer::core;
+using namespace imageanalyzer::native::core;
 
 class CImage_test
     :public ::testing::Test

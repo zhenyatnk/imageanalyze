@@ -1,9 +1,10 @@
-#include <imageanalyzer/core/CFileName.hpp>
+#include <imageanalyzer.native/core/CFileName.hpp>
 
 #include <fstream>
 #include <algorithm>
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 //--------------------------------------------------------------------------------------------------------
@@ -117,5 +118,6 @@ void CFileName::SetSeparator(std::wstring aSeparator)
     m_Path.SetSeparator(aSeparator);
 }
 
+}
 }
 }

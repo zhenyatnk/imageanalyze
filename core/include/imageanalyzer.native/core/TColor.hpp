@@ -1,9 +1,10 @@
 #pragma once
 
-#include <imageanalyzer/core/export.hpp>
+#include <imageanalyzer.native/core/export.hpp>
 #include <cstdint>
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 namespace {
@@ -66,5 +67,6 @@ struct IMAGEANALYZER_CORE_EXPORT TColor
     uint8_t m_Blue;
 };
 
+}
 }
 }

@@ -1,6 +1,7 @@
-#include <imageanalyzer/core/IFileObject.hpp>
+#include <imageanalyzer.native/core/IFileObject.hpp>
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 class CFileObject
@@ -29,5 +30,6 @@ IFileObject::Ptr CreateFileObject(const CFileName& aFileName)
     return std::make_shared<CFileObject>(aFileName);
 }
 
+}
 }
 }

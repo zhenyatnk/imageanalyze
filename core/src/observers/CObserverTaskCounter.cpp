@@ -1,5 +1,5 @@
-#include <imageanalyzer/core/Tasks.hpp>
-#include <imageanalyzer/core/Tasks.hpp>
+#include <imageanalyzer.native/core/Tasks.hpp>
+#include <imageanalyzer.native/core/Tasks.hpp>
 
 #include <threadpoolex/core/ITaskObserver.hpp>
 
@@ -9,6 +9,7 @@
 using namespace threadpoolex::core;
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 class CObserverTaskCounter
@@ -39,5 +40,6 @@ threadpoolex::core::IObserverTask::Ptr CreateObserverImgAnalyzeCounter(std::atom
     return std::make_shared<CObserverTaskCounter>(aCounter);
 }
 
+}
 }
 }

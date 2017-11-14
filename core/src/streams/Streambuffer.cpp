@@ -1,9 +1,10 @@
-#include <imageanalyzer/core/IStream.hpp>
+#include <imageanalyzer.native/core/IStream.hpp>
 
 #include <cstring>
 #include <cstdlib>
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 class CStreamLinear
@@ -184,5 +185,6 @@ IStream::Ptr CreateStreamBuffer(IStream::Ptr aStream)
 }
 //-------------------------------------------------------------------------------------
 
+}
 }
 }

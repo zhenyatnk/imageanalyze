@@ -1,10 +1,11 @@
 #pragma once
-#include <imageanalyzer/core/export.hpp>
-#include <imageanalyzer/core/TMetaImage.hpp>
+#include <imageanalyzer.native/core/export.hpp>
+#include <imageanalyzer.native/core/TMetaImage.hpp>
 
 #include <memory>
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 class IMAGEANALYZER_CORE_EXPORT IMetaComparator
@@ -24,5 +25,6 @@ public:
 
 IMAGEANALYZER_CORE_EXPORT IMetaComparator::Ptr CreateEuclideanDistance();
 
+}
 }
 }

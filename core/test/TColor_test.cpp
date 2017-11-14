@@ -1,9 +1,9 @@
-#include <imageanalyzer/core/TColor.hpp>
+#include <imageanalyzer.native/core/TColor.hpp>
 
 #include <gtest/gtest.h>
 
 //--------------------------------------------------
-using namespace imageanalyzer::core;
+using namespace imageanalyzer::native::core;
 
 class TColor_test
     :public ::testing::Test

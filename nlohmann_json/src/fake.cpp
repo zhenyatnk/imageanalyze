@@ -1,2 +1,2 @@
 
-#include <imageanalyzer/nlohmann_json/json.hpp>
+#include <imageanalyzer.native/nlohmann_json/json.hpp>

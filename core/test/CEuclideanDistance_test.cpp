@@ -1,9 +1,9 @@
-#include <imageanalyzer/core/IMetaComparator.hpp>
+#include <imageanalyzer.native/core/IMetaComparator.hpp>
 
 #include <gtest/gtest.h>
 
 //--------------------------------------------------
-using namespace imageanalyzer::core;
+using namespace imageanalyzer::native::core;
 
 class CEuclideanDistance_test
     :public ::testing::Test

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <imageanalyzer/core/export.hpp>
+#include <imageanalyzer.native/core/export.hpp>
 
 #include <memory>
 #include <functional>
@@ -8,6 +8,7 @@
 #include <atomic>
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 //--------------------------------------------------------------
@@ -201,6 +202,6 @@ private:
 };
 
 
-
+}
 }
 }

@@ -1,7 +1,8 @@
-#include <imageanalyzer/core/TColorJson.hpp>
-#include <imageanalyzer/core/TMetaImageJson.hpp>
+#include <imageanalyzer.native/core/TColorJson.hpp>
+#include <imageanalyzer.native/core/TMetaImageJson.hpp>
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 void to_json(nlohmann::json& j, const TColor& p)
@@ -33,5 +34,6 @@ void from_json(const nlohmann::json& j, THistogram& p)
     p.m_Data = j["data"].get<THistogram::TContainerColor>();
 }
 
+}
 }
 }

@@ -1,9 +1,9 @@
-#include <imageanalyzer/core/Unicode.hpp>
+#include <imageanalyzer.native/core/Unicode.hpp>
 
 #include <gtest/gtest.h>
 
 //--------------------------------------------------
-using namespace imageanalyzer::core;
+using namespace imageanalyzer::native::core;
 
 class Unicode
     :public ::testing::Test

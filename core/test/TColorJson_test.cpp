@@ -1,8 +1,8 @@
-﻿#include <imageanalyzer/core/TColorJson.hpp>
+﻿#include <imageanalyzer.native/core/TColorJson.hpp>
 
 #include <gtest/gtest.h>
 
-using namespace imageanalyzer::core;
+using namespace imageanalyzer::native::core;
 using namespace nlohmann;
 //--------------------------------------------------
 namespace

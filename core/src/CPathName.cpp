@@ -1,9 +1,10 @@
-#include <imageanalyzer/core/CPathName.hpp>
+#include <imageanalyzer.native/core/CPathName.hpp>
 
 #include <fstream>
 #include <algorithm>
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 //--------------------------------------------------------------------------------------------------------
@@ -89,5 +90,6 @@ void CPathName::SetSeparator(std::wstring aSeparator)
     m_Separator = aSeparator;
 }
 
+}
 }
 }

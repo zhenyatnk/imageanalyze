@@ -1,12 +1,13 @@
 #pragma once
 
-#include <imageanalyzer/core/IFileObject.hpp>
-#include <imageanalyzer/core/CPathName.hpp>
+#include <imageanalyzer.native/core/IFileObject.hpp>
+#include <imageanalyzer.native/core/CPathName.hpp>
 
 #include <vector>
 #include <memory>
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 class IMAGEANALYZER_CORE_EXPORT IDirectoryObject
@@ -25,5 +26,6 @@ public:
 
 IMAGEANALYZER_CORE_EXPORT IDirectoryObject::Ptr CreateDirectoryObject(const CPathName& aName);
 
+}
 }
 }

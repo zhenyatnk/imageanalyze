@@ -17,7 +17,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF NOT ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <imageanalyzer/nlohmann_json/json.hpp>
+#include <imageanalyzer.native/nlohmann_json/json.hpp>
 #include <gtest/gtest.h>
 
 using namespace nlohmann;

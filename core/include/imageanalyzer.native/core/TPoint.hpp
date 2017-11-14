@@ -1,6 +1,7 @@
 #pragma once
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 struct IMAGEANALYZER_CORE_EXPORT TPoint
@@ -22,5 +23,6 @@ struct IMAGEANALYZER_CORE_EXPORT TPoint
     int m_Y;
 };
 
+}
 }
 }

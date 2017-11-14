@@ -1,12 +1,13 @@
 #pragma once
 
-#include <imageanalyzer/core/export.hpp>
+#include <imageanalyzer.native/core/export.hpp>
 
 #include <string>
 #include <memory>
 #include <vector>
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 class IMAGEANALYZER_CORE_EXPORT CPathName
@@ -31,5 +32,6 @@ private:
     std::wstring m_Separator;
 };
 
+}
 }
 }

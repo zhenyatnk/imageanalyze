@@ -1,9 +1,10 @@
 #pragma once
 
-#include <imageanalyzer/core/TPoint.hpp>
-#include <imageanalyzer/core/TSize.hpp>
+#include <imageanalyzer.native/core/TPoint.hpp>
+#include <imageanalyzer.native/core/TSize.hpp>
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 struct IMAGEANALYZER_CORE_EXPORT TRectangle
@@ -21,5 +22,6 @@ struct IMAGEANALYZER_CORE_EXPORT TRectangle
     TSize m_Size;
 };
 
+}
 }
 }

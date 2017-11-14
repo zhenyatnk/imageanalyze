@@ -1,12 +1,13 @@
 #pragma once
 
-#include <imageanalyzer/core/IStreamException.hpp>
+#include <imageanalyzer.native/core/IStreamException.hpp>
 
 #include <memory>
 #include <string>
 #include <vector>
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 class IMAGEANALYZER_CORE_EXPORT ILinearStream
@@ -108,5 +109,6 @@ IMAGEANALYZER_CORE_EXPORT ILinearStream::Ptr CreateLinearBuffer(IStream::Ptr aSt
 
 IMAGEANALYZER_CORE_EXPORT ILinearWriteStream::Ptr CreateLinearWriteBuffer(const size_t &aSize);
 
+}
 }
 }

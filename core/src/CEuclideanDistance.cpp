@@ -1,9 +1,10 @@
-#include <imageanalyzer/core/IMetaComparator.hpp>
+#include <imageanalyzer.native/core/IMetaComparator.hpp>
 
 #include <fstream>
 #include <algorithm>
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 //--------------------------------------------------------------------------------------------------------
@@ -51,5 +52,6 @@ IMetaComparator::Ptr CreateEuclideanDistance()
     return std::make_shared<CEuclideanDistance>();
 }
 
+}
 }
 }

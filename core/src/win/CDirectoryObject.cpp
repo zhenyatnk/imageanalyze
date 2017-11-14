@@ -1,8 +1,9 @@
-#include <imageanalyzer/core/IDirectoryObject.hpp>
+#include <imageanalyzer.native/core/IDirectoryObject.hpp>
 
 #include <windows.h>
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 class CDirectoryObject
@@ -46,10 +47,9 @@ IDirectoryObject::ListPtr CDirectoryObject::GetDirectories() const
             do
             {
                 if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-                    if(!!wcscmp(ffd.cFileName, L"..") && !!wcscmp(ffd.cFileName, L"."))
+                    if (!!wcscmp(ffd.cFileName, L"..") && !!wcscmp(ffd.cFileName, L"."))
                         m_Directories->push_back(CreateDirectoryObject(CPathName(GetName()).AddPath(ffd.cFileName)));
-            }
-            while (!!FindNextFileW(hFind, &ffd));
+            } while (!!FindNextFileW(hFind, &ffd));
         }
 
     }
@@ -87,5 +87,6 @@ IDirectoryObject::Ptr CreateDirectoryObject(const CPathName& aName)
 }
 
 
+}
 }
 }

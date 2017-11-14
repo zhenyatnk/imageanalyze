@@ -1,7 +1,8 @@
-#include <imageanalyzer/core/Unicode.hpp>
+#include <imageanalyzer.native/core/Unicode.hpp>
 #include <windows.h>
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 std::wstring convert(const std::string& aValue)
@@ -26,5 +27,6 @@ std::string convert(const std::wstring& aValue)
     return r;
 }
 
+}
 }
 }

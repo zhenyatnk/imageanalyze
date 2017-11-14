@@ -1,10 +1,11 @@
 #pragma once
 
-#include <imageanalyzer/core/BaseExceptions.hpp>
+#include <imageanalyzer.native/core/BaseExceptions.hpp>
 
 #include <threadpoolex/core/ITaskExceptions.hpp>
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 namespace exceptions {
 
@@ -17,6 +18,7 @@ public:
     {}
 };
 
+}
 }
 }
 }

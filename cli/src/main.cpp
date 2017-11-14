@@ -1,10 +1,10 @@
 #include <stdio.h>
 
-#include <imageanalyzer/core/Tasks.hpp>
-#include <imageanalyzer/core/IDirectoryObject.hpp>
-#include <imageanalyzer/core/TMetaImageJson.hpp>
-#include <imageanalyzer/core/IMetaComparator.hpp>
-#include <imageanalyzer/core/Unicode.hpp>
+#include <imageanalyzer.native/core/Tasks.hpp>
+#include <imageanalyzer.native/core/IDirectoryObject.hpp>
+#include <imageanalyzer.native/core/TMetaImageJson.hpp>
+#include <imageanalyzer.native/core/IMetaComparator.hpp>
+#include <imageanalyzer.native/core/Unicode.hpp>
 
 #include <threadpoolex/core/ITaskWait.hpp>
 #include <threadpoolex/core/ITimerActiveObserver.hpp>
@@ -14,9 +14,8 @@
 
 #include <chrono>
 
-using namespace imageanalyzer::core;
+using namespace imageanalyzer::native::core;
 using namespace threadpoolex::core;
-
 
 namespace
 {

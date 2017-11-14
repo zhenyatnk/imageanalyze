@@ -1,8 +1,8 @@
-#include <imageanalyzer/core/TMetaImageJson.hpp>
+#include <imageanalyzer.native/core/TMetaImageJson.hpp>
 
 #include <gtest/gtest.h>
 
-using namespace imageanalyzer::core;
+using namespace imageanalyzer::native::core;
 using namespace nlohmann;
 //--------------------------------------------------
 namespace

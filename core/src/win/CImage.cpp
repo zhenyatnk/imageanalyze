@@ -1,6 +1,6 @@
-#include <imageanalyzer/core/IImage.hpp>
-#include <imageanalyzer/core/RAII.hpp>
-#include <imageanalyzer/core/Unicode.hpp>
+#include <imageanalyzer.native/core/IImage.hpp>
+#include <imageanalyzer.native/core/RAII.hpp>
+#include <imageanalyzer.native/core/Unicode.hpp>
 
 #include <objidl.h>
 #include <gdiplus.h>
@@ -9,6 +9,7 @@
 using namespace Gdiplus;
 
 namespace imageanalyzer {
+namespace native {
 namespace core {
 
 namespace {
@@ -19,8 +20,8 @@ class GDI_initializer
 public:
     GDI_initializer()
     {
-        CHECK_THROW_OTHER_ERR(GdiplusStartup(&m_GdiplusToken, &m_GdiplusStartupInput, NULL), 
-                             Status::Ok, exceptions::image_error, "Can't initializing GDI Plus");
+        CHECK_THROW_OTHER_ERR(GdiplusStartup(&m_GdiplusToken, &m_GdiplusStartupInput, NULL),
+            Status::Ok, exceptions::image_error, "Can't initializing GDI Plus");
     }
 
     ~GDI_initializer()
@@ -90,7 +91,7 @@ ILinearStream::Ptr CImage::GetColors(const TRectangle& aPixels)
 
         lResult = CreateLinearWriteBuffer(aPixels.m_Size.m_Width * aPixels.m_Size.m_Height * sizeof(uint32_t));
         for (uint32_t iY = 0; iY < aPixels.m_Size.m_Height; ++iY)
-            memcpy(lResult->GetBuff<uint32_t*>() + iY*aPixels.m_Size.m_Width, (uint8_t*)lBlockBitmap->Scan0 + iY*lBlockBitmap->Stride, aPixels.m_Size.m_Width*sizeof(uint32_t));
+            memcpy(lResult->GetBuff<uint32_t*>() + iY*aPixels.m_Size.m_Width, (uint8_t*)lBlockBitmap->Scan0 + iY*lBlockBitmap->Stride, aPixels.m_Size.m_Width * sizeof(uint32_t));
 
         CHECK_THROW_OTHER_ERR(GetImage()->UnlockBits(lBlockBitmap.get()),
             Status::Ok, exceptions::image_error, "Can't unlock block color pixel for file=" + convert(m_FileName.GetFullFileName()));
@@ -111,7 +112,7 @@ std::shared_ptr<Bitmap> CImage::GetImage()
         CHECK_THROW_OTHER_ERR(m_FileImage->GetLastStatus(),
             Status::Ok, exceptions::image_error, "Can't open image file=" + convert(m_FileName.GetFullFileName()));
     }
-    
+
     return m_FileImage;
 }
 
@@ -120,5 +121,6 @@ IImage::Ptr CreateImage(const CFileName& aFileName)
     return std::make_shared<CImage>(aFileName);
 }
 
+}
 }
 }
