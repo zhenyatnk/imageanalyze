@@ -117,10 +117,7 @@ void command_compare(const CFileName& aFileName, const CPathName& aPathName)
         for (auto lFile : *lFiles)
         {
             auto lFullFileName = lFile->GetName().GetFullFileName();
-            std::ifstream data(lFullFileName);
-            nlohmann::json j_data;
-            data >> j_data;
-            lResultFind.insert(std::make_pair(CreateEuclideanDistance()->GePercentEqual(lMetaFind, j_data.get<TMetaImage>()), lFullFileName));
+            lResultFind.insert(std::make_pair(CreateEuclideanDistance()->GePercentEqual(lMetaFind, CreateTMetaImageFromFile(lFullFileName)), lFullFileName));
         }
         
         auto lCount = 0;

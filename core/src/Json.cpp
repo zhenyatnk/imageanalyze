@@ -1,6 +1,8 @@
 #include <imageanalyzer.native/core/TColorJson.hpp>
 #include <imageanalyzer.native/core/TMetaImageJson.hpp>
 
+#include <fstream>
+
 namespace imageanalyzer {
 namespace native {
 namespace core {
@@ -32,6 +34,14 @@ void to_json(nlohmann::json& j, const THistogram& p)
 void from_json(const nlohmann::json& j, THistogram& p)
 {
     p.m_Data = j["data"].get<THistogram::TContainerColor>();
+}
+
+TMetaImage CreateTMetaImageFromFile(const std::wstring &aFileName)
+{
+    std::ifstream data(aFileName);
+    nlohmann::json j_data;
+    data >> j_data;
+    return j_data.get<TMetaImage>();
 }
 
 }

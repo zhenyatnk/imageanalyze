@@ -48,6 +48,8 @@ public:
     TContainerHistograms m_Histograms;
 };
 
+IMAGEANALYZER_CORE_EXPORT TMetaImage CreateTMetaImageFromFile(const std::wstring &aFileName);
+
 }
 }
 }
