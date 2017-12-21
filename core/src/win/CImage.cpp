@@ -1,7 +1,7 @@
 #include <imageanalyzer.native/core/IImage.hpp>
-#include <imageanalyzer.native/core/Unicode.hpp>
 
 #include <baseex/core/RAII.hpp>
+#include <baseex/core/Unicode.hpp>
 
 #include <objidl.h>
 #include <gdiplus.h>
@@ -75,7 +75,7 @@ TColor CImage::GetColor(const TPoint &aPixel)
     {
         std::lock_guard<std::mutex> l(m_GetColor);
         CHECK_THROW_OTHER_ERR(GetImage()->GetPixel(aPixel.m_X, aPixel.m_Y, &lPixel),
-            Status::Ok, exceptions::image_error, "Can't get color for pixel for file=" + convert(m_FileName.GetFullFileName()));
+            Status::Ok, exceptions::image_error, "Can't get color for pixel for file=" + baseex::core::convert(m_FileName.GetFullFileName()));
     }
     return TColor(lPixel.GetAlpha(), lPixel.GetRed(), lPixel.GetGreen(), lPixel.GetBlue());
 }
@@ -88,14 +88,14 @@ baseex::core::ILinearStream::Ptr CImage::GetColors(const TRectangle& aPixels)
         auto lBlockBitmap = std::make_shared<BitmapData>();
         Rect rect(aPixels.m_Left.m_X, aPixels.m_Left.m_Y, aPixels.m_Size.m_Width, aPixels.m_Size.m_Height);
         CHECK_THROW_OTHER_ERR(GetImage()->LockBits(&rect, ImageLockModeRead, PixelFormat32bppARGB, lBlockBitmap.get()),
-            Status::Ok, exceptions::image_error, "Can't lock block color pixel for file=" + convert(m_FileName.GetFullFileName()));
+            Status::Ok, exceptions::image_error, "Can't lock block color pixel for file=" + baseex::core::convert(m_FileName.GetFullFileName()));
 
         lResult = baseex::core::CreateLinearWriteBuffer(aPixels.m_Size.m_Width * aPixels.m_Size.m_Height * sizeof(uint32_t));
         for (uint32_t iY = 0; iY < aPixels.m_Size.m_Height; ++iY)
             memcpy(lResult->GetBuff<uint32_t*>() + iY*aPixels.m_Size.m_Width, (uint8_t*)lBlockBitmap->Scan0 + iY*lBlockBitmap->Stride, aPixels.m_Size.m_Width * sizeof(uint32_t));
 
         CHECK_THROW_OTHER_ERR(GetImage()->UnlockBits(lBlockBitmap.get()),
-            Status::Ok, exceptions::image_error, "Can't unlock block color pixel for file=" + convert(m_FileName.GetFullFileName()));
+            Status::Ok, exceptions::image_error, "Can't unlock block color pixel for file=" + baseex::core::convert(m_FileName.GetFullFileName()));
     }
     return lResult;
 }
@@ -111,7 +111,7 @@ std::shared_ptr<Bitmap> CImage::GetImage()
     {
         m_FileImage = std::shared_ptr<Bitmap>(Bitmap::FromFile(m_FileName.GetFullFileName().c_str()));
         CHECK_THROW_OTHER_ERR(m_FileImage->GetLastStatus(),
-            Status::Ok, exceptions::image_error, "Can't open image file=" + convert(m_FileName.GetFullFileName()));
+            Status::Ok, exceptions::image_error, "Can't open image file=" + baseex::core::convert(m_FileName.GetFullFileName()));
     }
 
     return m_FileImage;

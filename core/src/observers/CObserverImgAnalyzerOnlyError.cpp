@@ -1,7 +1,8 @@
 #include <imageanalyzer.native/core/Tasks.hpp>
-#include <imageanalyzer.native/core/Unicode.hpp>
 
 #include <threadpoolex/core/ITaskObserver.hpp>
+
+#include <baseex/core/Unicode.hpp>
 
 #include <iostream>
 #include <chrono>
@@ -32,7 +33,7 @@ CObserverImgAnalyzerOnlyError::CObserverImgAnalyzerOnlyError(const baseex::core:
 
 void CObserverImgAnalyzerOnlyError::HandleError(const std::string &aMessage, const int& aErrorCode)
 {
-    std::wcout << "Error in proccess analyze image ='" << m_FileName.GetFullFileName() << "'. Message '" << convert(aMessage) << "'" << std::endl;
+    std::wcout << "Error in proccess analyze image ='" << m_FileName.GetFullFileName() << "'. Message '" << baseex::core::convert(aMessage) << "'" << std::endl;
 }
 
 threadpoolex::core::IObserverTask::Ptr CreateObserverImgAnalyzeOnlyError(const baseex::core::CFileName &aFileName)

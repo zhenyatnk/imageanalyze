@@ -3,10 +3,10 @@
 #include <imageanalyzer.native/core/TRectangle.hpp>
 #include <imageanalyzer.native/core/TMetaImage.hpp>
 #include <imageanalyzer.native/core/TMetaImageJson.hpp>
-#include <imageanalyzer.native/core/Unicode.hpp>
 
 #include <threadpoolex/core/ITaskWait.hpp>
 
+#include <baseex/core/Unicode.hpp>
 #include <baseex/core/RAII.hpp>
 
 #include <mutex>
@@ -88,7 +88,7 @@ std::vector<TRectangle> CTaskAnalyzeFileMT::GetBlocksAnalyze(IImage::Ptr aImage,
 IWait::Ptr CTaskAnalyzeFileMT::AddTaskToThreadPool(ITask::Ptr aTask)
 {
     auto lThreadPool = m_ThreadPool.lock();
-    CHECK_THROW_BOOL(!!lThreadPool, exceptions::task_analyze_error, "Can't execute MT task, thread pool already destroy. FileResult:'" + convert(m_FileResult.GetFullFileName()) + "'");
+    CHECK_THROW_BOOL(!!lThreadPool, exceptions::task_analyze_error, "Can't execute MT task, thread pool already destroy. FileResult:'" + baseex::core::convert(m_FileResult.GetFullFileName()) + "'");
 
     IWait::Ptr lWait;
     lThreadPool->AddTask(CreateTaskWait(aTask, lWait));

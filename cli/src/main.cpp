@@ -3,13 +3,13 @@
 #include <imageanalyzer.native/core/Tasks.hpp>
 #include <imageanalyzer.native/core/TMetaImageJson.hpp>
 #include <imageanalyzer.native/core/IMetaComparator.hpp>
-#include <imageanalyzer.native/core/Unicode.hpp>
 
 #include <threadpoolex/core/ITaskWait.hpp>
 
 #include <baseex/core/IDirectoryObject.hpp>
 #include <baseex/core/ITimerActiveObserver.hpp>
 #include <baseex/core/ITimerActive.hpp>
+#include <baseex/core/Unicode.hpp>
 
 #include <iostream>
 #include <fstream>
@@ -132,8 +132,8 @@ int main(int ac, char** av)
 {
     std::locale::global(std::locale(""));
     std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-    if      (ac > 2 && std::string("analyze") == av[1])   command_analyze(baseex::core::CPathName(convert(av[2])));
-    else if (ac > 3 && std::string("compare") == av[1])   command_compare(baseex::core::CFileName(convert(av[2])), baseex::core::CPathName(convert(av[3])));
+    if      (ac > 2 && std::string("analyze") == av[1])   command_analyze(baseex::core::CPathName(baseex::core::convert(av[2])));
+    else if (ac > 3 && std::string("compare") == av[1])   command_compare(baseex::core::CFileName(baseex::core::convert(av[2])), baseex::core::CPathName(baseex::core::convert(av[3])));
     else
         ;
     std::cout << "Time process operation: '"
