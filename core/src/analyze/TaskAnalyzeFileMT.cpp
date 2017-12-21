@@ -5,8 +5,9 @@
 #include <imageanalyzer.native/core/TMetaImageJson.hpp>
 #include <imageanalyzer.native/core/Unicode.hpp>
 
-#include <threadpoolex/core/RAII.hpp>
 #include <threadpoolex/core/ITaskWait.hpp>
+
+#include <baseex/core/RAII.hpp>
 
 #include <mutex>
 #include <fstream>
@@ -23,7 +24,7 @@ class CTaskAnalyzeFileMT
     :public ITask, virtual CBaseObservableTask
 {
 public:
-    CTaskAnalyzeFileMT(const CFileName &aImageName, const CFileName &aFileResult, IThreadPool::WPtr aThreadPool);
+    CTaskAnalyzeFileMT(const baseex::core::CFileName &aImageName, const baseex::core::CFileName &aFileResult, IThreadPool::WPtr aThreadPool);
 
     virtual void Execute() override;
 
@@ -32,12 +33,12 @@ protected:
     IWait::Ptr AddTaskToThreadPool(ITask::Ptr);
 
 private:
-    CFileName m_ImageName;
-    CFileName m_FileResult;
+    baseex::core::CFileName m_ImageName;
+    baseex::core::CFileName m_FileResult;
     IThreadPool::WPtr m_ThreadPool;
 };
 
-CTaskAnalyzeFileMT::CTaskAnalyzeFileMT(const CFileName &aImageName, const CFileName &aFileResult, IThreadPool::WPtr aThreadPool)
+CTaskAnalyzeFileMT::CTaskAnalyzeFileMT(const baseex::core::CFileName &aImageName, const baseex::core::CFileName &aFileResult, IThreadPool::WPtr aThreadPool)
     :m_ImageName(aImageName), m_FileResult(aFileResult), m_ThreadPool(aThreadPool)
 {}
 
@@ -45,7 +46,7 @@ void CTaskAnalyzeFileMT::Execute()
 {
     try
     {
-        CRAII<CObservableTask::Ptr> l(this->GetObserver(), [](CObservableTask::Ptr aObserver) { aObserver->NotifyStart(); },
+        baseex::core::CRAII<CObservableTask::Ptr> l(this->GetObserver(), [](CObservableTask::Ptr aObserver) { aObserver->NotifyStart(); },
             [](CObservableTask::Ptr aObserver) { aObserver->NotifyComplete(); });
 
         TMetaImage lResult;
@@ -63,7 +64,7 @@ void CTaskAnalyzeFileMT::Execute()
         std::ofstream lFileJson(m_FileResult.GetFullFileName());
         lFileJson << nlohmann::json(lResult) << std::endl;
     }
-    CATCH_CODE_ERROR(exceptions_base::error_base, this->GetObserver()->NotifyError);
+    CATCH_CODE_ERROR(baseex::core::exceptions_base::error_base, this->GetObserver()->NotifyError);
 }
 
 std::vector<TRectangle> CTaskAnalyzeFileMT::GetBlocksAnalyze(IImage::Ptr aImage, TSize aSizeAnalyze, uint8_t aX, uint8_t aY)
@@ -94,11 +95,11 @@ IWait::Ptr CTaskAnalyzeFileMT::AddTaskToThreadPool(ITask::Ptr aTask)
     return lWait;
 }
 //-------------------------------------------------------------------------
-ITask::Ptr CreateTaskAnalyzeInFileMT(const CFileName &aFileName, IThreadPool::WPtr aThreadPool)
+ITask::Ptr CreateTaskAnalyzeInFileMT(const baseex::core::CFileName &aFileName, IThreadPool::WPtr aThreadPool)
 {
-    return CreateTaskAnalyzeInFileMT(aFileName, CFileName(aFileName.GetFullFileName() + L".data"), aThreadPool);
+    return CreateTaskAnalyzeInFileMT(aFileName, baseex::core::CFileName(aFileName.GetFullFileName() + L".data"), aThreadPool);
 }
-ITask::Ptr CreateTaskAnalyzeInFileMT(const CFileName &aFileName, const CFileName &aFileResult, IThreadPool::WPtr aThreadPool)
+ITask::Ptr CreateTaskAnalyzeInFileMT(const baseex::core::CFileName &aFileName, const baseex::core::CFileName &aFileResult, IThreadPool::WPtr aThreadPool)
 {
     return std::make_shared<CTaskAnalyzeFileMT>(aFileName, aFileResult, aThreadPool);
 }

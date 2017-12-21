@@ -1,14 +1,16 @@
 #include <stdio.h>
 
 #include <imageanalyzer.native/core/Tasks.hpp>
-#include <imageanalyzer.native/core/IDirectoryObject.hpp>
 #include <imageanalyzer.native/core/TMetaImageJson.hpp>
 #include <imageanalyzer.native/core/IMetaComparator.hpp>
 #include <imageanalyzer.native/core/Unicode.hpp>
 
 #include <threadpoolex/core/ITaskWait.hpp>
-#include <threadpoolex/core/ITimerActiveObserver.hpp>
-#include <threadpoolex/core/ITimerActive.hpp>
+
+#include <baseex/core/IDirectoryObject.hpp>
+#include <baseex/core/ITimerActiveObserver.hpp>
+#include <baseex/core/ITimerActive.hpp>
+
 #include <iostream>
 #include <fstream>
 
@@ -20,7 +22,7 @@ using namespace threadpoolex::core;
 namespace
 {
     class CObserverPrintProgress
-        :public EmptyObserverTimer
+        :public baseex::core::EmptyObserverTimer
     {
     public:
         CObserverPrintProgress(uint32_t aCount, std::atomic_int &aCurrent)
@@ -42,7 +44,7 @@ namespace
     };
     //-----------------------------------------------------------------------------
     class CObserverTryExpansion
-        :public EmptyObserverTimer
+        :public baseex::core::EmptyObserverTimer
     {
     public:
         CObserverTryExpansion(IThreadPool::Ptr aThreadPool)
@@ -71,18 +73,18 @@ IWait::Ptr AddToThreadPool(ITask::Ptr aTask, const std::vector<IObserverTask::Pt
     return lWait;
 }
 
-void command_analyze(const CPathName& aPathName)
+void command_analyze(const baseex::core::CPathName& aPathName)
 {
     std::atomic_int lCountComplete = 0;
     std::vector<IWait::Ptr> lFinishs;
-    IDirectoryObject::Ptr lDirectory = CreateDirectoryObject(aPathName);
+    baseex::core::IDirectoryObject::Ptr lDirectory = CreateDirectoryObject(aPathName);
     auto lFiles = lDirectory->GetFiles(L"*.jpg");
     if (!lFiles->empty())
     {
-        ITimerActive::Ptr lTimer = CreateTimerActive(1000);
+        baseex::core::ITimerActive::Ptr lTimer = baseex::core::CreateTimerActive(1000);
         lTimer->AddObserver(std::make_shared<CObserverPrintProgress>(lFiles->size(), lCountComplete));
 
-        ITimerActive::Ptr lTimerFiles = CreateTimerActive(1000);
+        baseex::core::ITimerActive::Ptr lTimerFiles = baseex::core::CreateTimerActive(1000);
         lTimerFiles->AddObserver(std::make_shared<CObserverTryExpansion>(ThreadPoolGlobal::GetInstance()()));
 
         for (auto lFile : *lFiles)
@@ -96,9 +98,9 @@ void command_analyze(const CPathName& aPathName)
 
 }
 
-void command_compare(const CFileName& aFileName, const CPathName& aPathName)
+void command_compare(const baseex::core::CFileName& aFileName, const baseex::core::CPathName& aPathName)
 {
-    IDirectoryObject::Ptr lDirectory = CreateDirectoryObject(aPathName);
+    baseex::core::IDirectoryObject::Ptr lDirectory = CreateDirectoryObject(aPathName);
     auto lFiles = lDirectory->GetFiles(L"*.data");
     if (!lFiles->empty())
     {
@@ -107,7 +109,7 @@ void command_compare(const CFileName& aFileName, const CPathName& aPathName)
         lAnalyzeTask->AddObserver(CreateObserverImgAnalyzeOnlyError(aFileName));
         lAnalyzeTask->Execute();
         
-        std::ifstream data_(CFileName(aFileName.GetFullFileName() + L".data").GetFullFileName());
+        std::ifstream data_(baseex::core::CFileName(aFileName.GetFullFileName() + L".data").GetFullFileName());
         if (!data_.is_open())
             return;
         nlohmann::json j_data;
@@ -130,8 +132,8 @@ int main(int ac, char** av)
 {
     std::locale::global(std::locale(""));
     std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-    if      (ac > 2 && std::string("analyze") == av[1])   command_analyze(CPathName(convert(av[2])));
-    else if (ac > 3 && std::string("compare") == av[1])   command_compare(CFileName(convert(av[2])), CPathName(convert(av[3])));
+    if      (ac > 2 && std::string("analyze") == av[1])   command_analyze(baseex::core::CPathName(convert(av[2])));
+    else if (ac > 3 && std::string("compare") == av[1])   command_compare(baseex::core::CFileName(convert(av[2])), baseex::core::CPathName(convert(av[3])));
     else
         ;
     std::cout << "Time process operation: '"

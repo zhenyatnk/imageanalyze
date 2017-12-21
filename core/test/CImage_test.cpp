@@ -4,6 +4,7 @@
 
 //--------------------------------------------------
 using namespace imageanalyzer::native::core;
+using namespace baseex::core;
 
 class CImage_test
     :public ::testing::Test

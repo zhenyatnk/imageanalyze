@@ -17,7 +17,7 @@ class CObserverTaskAnalyzer
 {
 
 public:
-    explicit CObserverTaskAnalyzer(const CFileName &aFileName);
+    explicit CObserverTaskAnalyzer(const baseex::core::CFileName &aFileName);
 
 public:
     virtual void HandleStart() override;
@@ -25,11 +25,11 @@ public:
     virtual void HandleError(const std::string &aMessage, const int& aErrorCode) override;
 
 private:
-    CFileName m_FileName;
+    baseex::core::CFileName m_FileName;
     std::chrono::steady_clock::time_point m_Start;
 };
 
-CObserverTaskAnalyzer::CObserverTaskAnalyzer(const CFileName &aFileName)
+CObserverTaskAnalyzer::CObserverTaskAnalyzer(const baseex::core::CFileName &aFileName)
     :m_FileName(aFileName)
 {}
 
@@ -49,7 +49,7 @@ void CObserverTaskAnalyzer::HandleError(const std::string &aMessage, const int& 
     std::wcout << "Error in proccess analyze image ='" << m_FileName.GetFullFileName() << "'. Message '" << convert(aMessage) << "'" << std::endl;
 }
 
-threadpoolex::core::IObserverTask::Ptr CreateObserverImgAnalyzeAll(const CFileName &aFileName)
+threadpoolex::core::IObserverTask::Ptr CreateObserverImgAnalyzeAll(const baseex::core::CFileName &aFileName)
 {
     return std::make_shared<CObserverTaskAnalyzer>(aFileName);
 }

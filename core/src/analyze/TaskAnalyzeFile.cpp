@@ -4,7 +4,7 @@
 #include <imageanalyzer.native/core/TMetaImage.hpp>
 #include <imageanalyzer.native/core/TMetaImageJson.hpp>
 
-#include <threadpoolex/core/RAII.hpp>
+#include <baseex/core/RAII.hpp>
 
 #include <mutex>
 #include <fstream>
@@ -22,7 +22,7 @@ class CTaskAnalyzeFile
     :public ITask, virtual CBaseObservableTask
 {
 public:
-    CTaskAnalyzeFile(const CFileName &aImageName, const CFileName &aFileResult);
+    CTaskAnalyzeFile(const baseex::core::CFileName &aImageName, const baseex::core::CFileName &aFileResult);
 
     virtual void Execute() override;
 
@@ -30,11 +30,11 @@ protected:
     std::vector<TRectangle> GetBlocksAnalyze(IImage::Ptr aImage, TSize aSizeAnalyze, uint8_t aX, uint8_t aY);
 
 private:
-    CFileName m_ImageName;
-    CFileName m_FileResult;
+    baseex::core::CFileName m_ImageName;
+    baseex::core::CFileName m_FileResult;
 };
 
-CTaskAnalyzeFile::CTaskAnalyzeFile(const CFileName &aImageName, const CFileName &aFileResult)
+CTaskAnalyzeFile::CTaskAnalyzeFile(const baseex::core::CFileName &aImageName, const baseex::core::CFileName &aFileResult)
     :m_ImageName(aImageName), m_FileResult(aFileResult)
 {}
 
@@ -42,7 +42,7 @@ void CTaskAnalyzeFile::Execute()
 {
     try
     {
-        CRAII<CObservableTask::Ptr> l(this->GetObserver(), [](CObservableTask::Ptr aObserver) { aObserver->NotifyStart(); },
+        baseex::core::CRAII<CObservableTask::Ptr> l(this->GetObserver(), [](CObservableTask::Ptr aObserver) { aObserver->NotifyStart(); },
             [](CObservableTask::Ptr aObserver) { aObserver->NotifyComplete(); });
 
         TMetaImage lResult;
@@ -56,7 +56,7 @@ void CTaskAnalyzeFile::Execute()
         std::ofstream lFileJson(m_FileResult.GetFullFileName());
         lFileJson << nlohmann::json(lResult) << std::endl;
     }
-    CATCH_CODE_ERROR(exceptions_base::error_base, this->GetObserver()->NotifyError)
+    CATCH_CODE_ERROR(baseex::core::exceptions_base::error_base, this->GetObserver()->NotifyError)
 }
 
 std::vector<TRectangle> CTaskAnalyzeFile::GetBlocksAnalyze(IImage::Ptr aImage, TSize aSizeAnalyze, uint8_t aX, uint8_t aY)
@@ -79,11 +79,11 @@ std::vector<TRectangle> CTaskAnalyzeFile::GetBlocksAnalyze(IImage::Ptr aImage, T
 
 //-------------------------------------------------------------------------
 
-ITask::Ptr CreateTaskAnalyzeInFile(const CFileName &aFileName)
+ITask::Ptr CreateTaskAnalyzeInFile(const baseex::core::CFileName &aFileName)
 {
-    return CreateTaskAnalyzeInFile(aFileName, CFileName(aFileName.GetFullFileName() + L".data"));
+    return CreateTaskAnalyzeInFile(aFileName, baseex::core::CFileName(aFileName.GetFullFileName() + L".data"));
 }
-ITask::Ptr CreateTaskAnalyzeInFile(const CFileName &aFileName, const CFileName &aFileResult)
+ITask::Ptr CreateTaskAnalyzeInFile(const baseex::core::CFileName &aFileName, const baseex::core::CFileName &aFileResult)
 {
     return std::make_shared<CTaskAnalyzeFile>(aFileName, aFileResult);
 }

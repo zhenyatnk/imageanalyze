@@ -17,16 +17,16 @@ class CObserverImgAnalyzerOnlyError
 {
 
 public:
-    explicit CObserverImgAnalyzerOnlyError(const CFileName &aFileName);
+    explicit CObserverImgAnalyzerOnlyError(const baseex::core::CFileName &aFileName);
 
 public:
     virtual void HandleError(const std::string &aMessage, const int& aErrorCode) override;
 
 private:
-    CFileName m_FileName;
+    baseex::core::CFileName m_FileName;
 };
 
-CObserverImgAnalyzerOnlyError::CObserverImgAnalyzerOnlyError(const CFileName &aFileName)
+CObserverImgAnalyzerOnlyError::CObserverImgAnalyzerOnlyError(const baseex::core::CFileName &aFileName)
     :m_FileName(aFileName)
 {}
 
@@ -35,7 +35,7 @@ void CObserverImgAnalyzerOnlyError::HandleError(const std::string &aMessage, con
     std::wcout << "Error in proccess analyze image ='" << m_FileName.GetFullFileName() << "'. Message '" << convert(aMessage) << "'" << std::endl;
 }
 
-threadpoolex::core::IObserverTask::Ptr CreateObserverImgAnalyzeOnlyError(const CFileName &aFileName)
+threadpoolex::core::IObserverTask::Ptr CreateObserverImgAnalyzeOnlyError(const baseex::core::CFileName &aFileName)
 {
     return std::make_shared<CObserverImgAnalyzerOnlyError>(aFileName);
 }

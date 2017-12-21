@@ -4,9 +4,9 @@
 #include <imageanalyzer.native/core/TSize.hpp>
 #include <imageanalyzer.native/core/TPoint.hpp>
 #include <imageanalyzer.native/core/TRectangle.hpp>
-#include <imageanalyzer.native/core/IStream.hpp>
-#include <imageanalyzer.native/core/CFileName.hpp>
 #include <imageanalyzer.native/core/IImageExceptions.hpp>
+#include <baseex/core/IStream.hpp>
+#include <baseex/core/CFileName.hpp>
 
 #include <memory>
 
@@ -23,11 +23,11 @@ public:
     virtual ~IImage() = default;
 
     virtual TColor GetColor(const TPoint&) = 0;
-    virtual ILinearStream::Ptr GetColors(const TRectangle&) = 0;
+    virtual baseex::core::ILinearStream::Ptr GetColors(const TRectangle&) = 0;
     virtual TSize GetSize() = 0;
 };
 
-IMAGEANALYZER_CORE_EXPORT IImage::Ptr CreateImage(const CFileName& aFileName);
+IMAGEANALYZER_CORE_EXPORT IImage::Ptr CreateImage(const baseex::core::CFileName& aFileName);
 
 }
 }

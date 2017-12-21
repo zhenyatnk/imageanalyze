@@ -1,6 +1,7 @@
 #include <imageanalyzer.native/core/IImage.hpp>
-#include <imageanalyzer.native/core/RAII.hpp>
 #include <imageanalyzer.native/core/Unicode.hpp>
+
+#include <baseex/core/RAII.hpp>
 
 #include <objidl.h>
 #include <gdiplus.h>
@@ -15,7 +16,7 @@ namespace core {
 namespace {
 
 class GDI_initializer
-    :public IRAII
+    :public baseex::core::IRAII
 {
 public:
     GDI_initializer()
@@ -48,10 +49,10 @@ class CImage
     :public IImage
 {
 public:
-    CImage(const CFileName& aFileName);
+    CImage(const baseex::core::CFileName& aFileName);
 
     virtual TColor GetColor(const TPoint &aPixel) override;
-    virtual ILinearStream::Ptr GetColors(const TRectangle& aPixels) override;
+    virtual baseex::core::ILinearStream::Ptr GetColors(const TRectangle& aPixels) override;
     virtual TSize GetSize() override;
 
 protected:
@@ -59,12 +60,12 @@ protected:
 
 private:
     GDI_initializer m_GDI;
-    CFileName m_FileName;
+    baseex::core::CFileName m_FileName;
     std::shared_ptr<Bitmap> m_FileImage;
     std::mutex m_GetColor;
 };
 
-CImage::CImage(const CFileName& aFileName)
+CImage::CImage(const baseex::core::CFileName& aFileName)
     :m_FileName(aFileName)
 {}
 
@@ -79,9 +80,9 @@ TColor CImage::GetColor(const TPoint &aPixel)
     return TColor(lPixel.GetAlpha(), lPixel.GetRed(), lPixel.GetGreen(), lPixel.GetBlue());
 }
 
-ILinearStream::Ptr CImage::GetColors(const TRectangle& aPixels)
+baseex::core::ILinearStream::Ptr CImage::GetColors(const TRectangle& aPixels)
 {
-    ILinearWriteStream::Ptr lResult;
+    baseex::core::ILinearWriteStream::Ptr lResult;
     {
         std::lock_guard<std::mutex> l(m_GetColor);
         auto lBlockBitmap = std::make_shared<BitmapData>();
@@ -89,7 +90,7 @@ ILinearStream::Ptr CImage::GetColors(const TRectangle& aPixels)
         CHECK_THROW_OTHER_ERR(GetImage()->LockBits(&rect, ImageLockModeRead, PixelFormat32bppARGB, lBlockBitmap.get()),
             Status::Ok, exceptions::image_error, "Can't lock block color pixel for file=" + convert(m_FileName.GetFullFileName()));
 
-        lResult = CreateLinearWriteBuffer(aPixels.m_Size.m_Width * aPixels.m_Size.m_Height * sizeof(uint32_t));
+        lResult = baseex::core::CreateLinearWriteBuffer(aPixels.m_Size.m_Width * aPixels.m_Size.m_Height * sizeof(uint32_t));
         for (uint32_t iY = 0; iY < aPixels.m_Size.m_Height; ++iY)
             memcpy(lResult->GetBuff<uint32_t*>() + iY*aPixels.m_Size.m_Width, (uint8_t*)lBlockBitmap->Scan0 + iY*lBlockBitmap->Stride, aPixels.m_Size.m_Width * sizeof(uint32_t));
 
@@ -116,7 +117,7 @@ std::shared_ptr<Bitmap> CImage::GetImage()
     return m_FileImage;
 }
 
-IImage::Ptr CreateImage(const CFileName& aFileName)
+IImage::Ptr CreateImage(const baseex::core::CFileName& aFileName)
 {
     return std::make_shared<CImage>(aFileName);
 }

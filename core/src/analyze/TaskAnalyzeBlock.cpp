@@ -4,7 +4,7 @@
 #include <imageanalyzer.native/core/TMetaImage.hpp>
 #include <imageanalyzer.native/core/TMetaImageJson.hpp>
 
-#include <threadpoolex/core/RAII.hpp>
+#include <baseex/core/RAII.hpp>
 
 #include <mutex>
 #include <fstream>
@@ -41,7 +41,7 @@ CTaskAnalyzeBlockImage::CTaskAnalyzeBlockImage(IImage::Ptr aImage, const TRectan
 
 void CTaskAnalyzeBlockImage::Execute()
 {
-    CRAII<CObservableTask::Ptr> l(this->GetObserver(), [](CObservableTask::Ptr aObserver) { aObserver->NotifyStart(); },
+    baseex::core::CRAII<CObservableTask::Ptr> l(this->GetObserver(), [](CObservableTask::Ptr aObserver) { aObserver->NotifyStart(); },
         [](CObservableTask::Ptr aObserver) { aObserver->NotifyComplete(); });
 
     auto lPixels = m_Image->GetColors(m_Rectangle);
