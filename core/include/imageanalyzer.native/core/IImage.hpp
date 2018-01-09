@@ -23,7 +23,7 @@ public:
     virtual ~IImage() = default;
 
     virtual TColor GetColor(const TPoint&) = 0;
-    virtual baseex::core::ILinearStream::Ptr GetColors(const TRectangle&) = 0;
+    virtual baseex::core::IStreamBuffer::Ptr GetColors(const TRectangle&) = 0;
     virtual TSize GetSize() = 0;
 };
 

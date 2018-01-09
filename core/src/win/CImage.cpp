@@ -52,7 +52,7 @@ public:
     CImage(const baseex::core::CFileName& aFileName);
 
     virtual TColor GetColor(const TPoint &aPixel) override;
-    virtual baseex::core::ILinearStream::Ptr GetColors(const TRectangle& aPixels) override;
+    virtual baseex::core::IStreamBuffer::Ptr GetColors(const TRectangle& aPixels) override;
     virtual TSize GetSize() override;
 
 protected:
@@ -80,9 +80,9 @@ TColor CImage::GetColor(const TPoint &aPixel)
     return TColor(lPixel.GetAlpha(), lPixel.GetRed(), lPixel.GetGreen(), lPixel.GetBlue());
 }
 
-baseex::core::ILinearStream::Ptr CImage::GetColors(const TRectangle& aPixels)
+baseex::core::IStreamBuffer::Ptr CImage::GetColors(const TRectangle& aPixels)
 {
-    baseex::core::ILinearWriteStream::Ptr lResult;
+    baseex::core::IStreamWriteBuffer::Ptr lResult;
     {
         std::lock_guard<std::mutex> l(m_GetColor);
         auto lBlockBitmap = std::make_shared<BitmapData>();
@@ -90,7 +90,7 @@ baseex::core::ILinearStream::Ptr CImage::GetColors(const TRectangle& aPixels)
         CHECK_THROW_OTHER_ERR(GetImage()->LockBits(&rect, ImageLockModeRead, PixelFormat32bppARGB, lBlockBitmap.get()),
             Status::Ok, exceptions::image_error, "Can't lock block color pixel for file=" + baseex::core::convert(m_FileName.GetFullFileName()));
 
-        lResult = baseex::core::CreateLinearWriteBuffer(aPixels.m_Size.m_Width * aPixels.m_Size.m_Height * sizeof(uint32_t));
+        lResult = baseex::core::CreateStreamWriteBuffer(aPixels.m_Size.m_Width * aPixels.m_Size.m_Height * sizeof(uint32_t));
         for (uint32_t iY = 0; iY < aPixels.m_Size.m_Height; ++iY)
             memcpy(lResult->GetBuff<uint32_t*>() + iY*aPixels.m_Size.m_Width, (uint8_t*)lBlockBitmap->Scan0 + iY*lBlockBitmap->Stride, aPixels.m_Size.m_Width * sizeof(uint32_t));
 
